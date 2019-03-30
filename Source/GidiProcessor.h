@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "MapReader.h"
 #include <SDL2/SDL.h>
 
 class GidiProcessor {
@@ -11,6 +12,7 @@ class GidiProcessor {
         static int availableControllers;
         static bool initialised;
         static void initialise();
+        static MapReader mapReader;
 
         int activeControllerIndex = -1;
         int activeMappingIndex = -1;

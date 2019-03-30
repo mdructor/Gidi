@@ -1,5 +1,9 @@
 #include "GidiProcessor.h"
 
+SDL_GameController* GidiProcessor::controllerHandles[MAX_CONTROLLERS];
+int GidiProcessor::availableControllers;
+bool GidiProcessor::initialised;
+
 void GidiProcessor::initialise() {
     if (!initialised) {
         SDL_Init(SDL_INIT_GAMECONTROLLER);
