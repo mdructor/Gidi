@@ -19,6 +19,7 @@ MainComponent::MainComponent()
 
     lblController.setText("Controller:", NotificationType::dontSendNotification);
     lblMapping.setText("Mapping:", NotificationType::dontSendNotification);
+    lblMidiPort.setText("Midi Port:", NotificationType::dontSendNotification);
 
     addAndMakeVisible(btnRefresh);
     addAndMakeVisible(btnToggle);
@@ -26,12 +27,14 @@ MainComponent::MainComponent()
     addAndMakeVisible(cbMappings);
     addAndMakeVisible(lblController);
     addAndMakeVisible(lblMapping);
+    addAndMakeVisible(lblMidiPort);
+    addAndMakeVisible(cbMidiPorts);
 
     refresh();
 
     // Make sure you set the size of the component after
     // you add any child components.
-    setSize (800, 600);
+    setSize (400, 200);
 
     // Some platforms require permissions to open input channels so request that here
     if (RuntimePermissions::isRequired (RuntimePermissions::recordAudio)
@@ -51,6 +54,10 @@ MainComponent::MainComponent()
 MainComponent::~MainComponent()
 {
     // This shuts down the audio device and clears the audio source.
+    if (processor != nullptr) {
+        delete processor;
+        processor = nullptr;
+    }
     shutdownAudio();
 }
 
@@ -75,6 +82,13 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     // Right now we are not producing any data, in which case we need to clear the buffer
     // (to prevent the output of random noise)
     bufferToFill.clearActiveBufferRegion();
+
+    if (processor != nullptr) {
+        processor->pulse();
+        for (auto msg : *(processor->getMessageQueue())) {
+            // send midi messages here in a midi buffer
+        }
+    }
 }
 
 void MainComponent::releaseResources()
@@ -99,18 +113,20 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-    lblController.setBounds(5, 50, 100, 25);
-    cbControllers.setBounds(100, 50, 250, 25);
-    lblMapping.setBounds(5, 100, 100, 25);
-    cbMappings.setBounds(100, 100, 250, 25);
+    lblMidiPort.setBounds(5, 25, 100, 25);
+    cbMidiPorts.setBounds(100, 25, 250, 25);
+    lblController.setBounds(5, 75, 100, 25);
+    cbControllers.setBounds(100, 75, 250, 25);
+    lblMapping.setBounds(5, 125, 100, 25);
+    cbMappings.setBounds(100, 125, 250, 25);
     btnRefresh.setBounds(25, 160, 150, 25);
     btnToggle.setBounds(225, 160, 150, 25);
 }
 
 void MainComponent::refresh() {
     GidiProcessor::updateCtrlrHandles();
-    Array<String> names = GidiProcessor::ctrlrNames();
-    Array<String> cbNames;
+    StringArray names = GidiProcessor::ctrlrNames();
+    StringArray cbNames;
     for (int i = 0; i < cbControllers.getNumItems(); ++i) {
         cbNames.add(cbControllers.getItemText(i));
     }
@@ -136,12 +152,45 @@ void MainComponent::refresh() {
             ++i;
         }
     }
+
+    
+    cbMappings.clear();
+    int i = 1;
+    for (auto name : mapReader.getLoadedMapNames()) {
+        cbMappings.addItem(name, i);
+        ++i;
+    } 
+
+    cbMidiPorts.clear();
+    i = 1;
+    for (auto name : MidiOutput::getDevices()) {
+        cbMidiPorts.addItem(name, i);
+        ++i;
+    }
 }
 
 void MainComponent::toggle() {
-    /*
-    if (cbControllers.getSelectedId() == 0 || cbMappings.getSelectedId() == 0) {
+    if (cbControllers.getSelectedId() == 0 || cbMappings.getSelectedId() == 0 || cbMidiPorts.getSelectedId() == 0) {
         return;
     }
-    */
+
+    if (processor == nullptr) { // must be off
+        btnToggle.setButtonText("Stop");
+        btnRefresh.setEnabled(false);
+        cbMappings.setEnabled(false);
+        cbControllers.setEnabled(false);
+        cbMidiPorts.setEnabled(false);
+        processor = new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbControllers.getSelectedId() - 1));
+        midiOut = MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1);
+    }
+    else {
+        btnToggle.setButtonText("Start");
+        btnRefresh.setEnabled(true);
+        cbMappings.setEnabled(true);
+        cbControllers.setEnabled(true);
+        cbMidiPorts.setEnabled(true);
+
+        delete processor;
+        processor = nullptr;
+    }
 }

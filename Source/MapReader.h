@@ -1,9 +1,11 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "GidiProcessor.h"
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
+
 
 class MapReader {
 
@@ -32,6 +34,30 @@ class MapReader {
 
         Array<json> getLoadedMaps() {
             return loadedMaps;
+        }
+
+        StringArray getLoadedMapNames() {
+            StringArray names;
+            for (auto map : loadedMaps) {
+                names.add(map["info"]["name"].get<std::string>());
+            }
+            return names;
+        }
+
+        HashMap<String, int>* getComponentMap(int index) {
+            HashMap<String, int> *componentMap = new HashMap<String, int>();
+            json rawMap = loadedMaps[index];
+
+            if (rawMap["map"]["A"].is_string()) {
+                componentMap->set("A", GidiProcessor::parseNote(rawMap["map"]["B"].get<std::string>()));
+            }
+
+            if (rawMap["map"]["B"].is_string()) {
+                componentMap->set("B", GidiProcessor::parseNote(rawMap["map"]["B"].get<std::string>()));
+            }
+
+
+            return componentMap;
         }
 
 };

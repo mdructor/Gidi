@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "MapReader.h"
 #include <SDL2/SDL.h>
 
 class GidiProcessor {
@@ -12,16 +11,14 @@ class GidiProcessor {
         static int availableControllers;
         static bool initialised;
         static void initialise();
-        static MapReader mapReader;
 
         int activeControllerIndex = -1;
-        int activeMappingIndex = -1;
 
         HashMap<String, bool> prevButtonState;
         HashMap<String, bool> currButtonState;
-        HashMap<String, int> buttonMap;
+        HashMap<String, int>* buttonMap;
 
-        Array<MidiMessage> msgQueue;
+        Array<MidiMessage>* msgQueue;
 
     public:
         static int parseNote(String note);
@@ -29,10 +26,10 @@ class GidiProcessor {
         static void updateCtrlrHandles();
 
         GidiProcessor();
-        GidiProcessor(int controllerIndex, int mappingIndex);
+        GidiProcessor(int controllerIndex, HashMap<String, int>* mapping);
         ~GidiProcessor();
 
         void pulse();
-        void getMessageQueue();
+        Array<MidiMessage>* getMessageQueue();
 };
 

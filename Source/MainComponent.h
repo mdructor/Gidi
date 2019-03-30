@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "MapReader.h"
 #include "GidiProcessor.h"
 
 //==============================================================================
@@ -37,10 +38,16 @@ private:
     // Your private member variables go here...
     ComboBox   cbControllers; 
     ComboBox   cbMappings;
+    ComboBox   cbMidiPorts;
     TextButton btnRefresh;
     TextButton btnToggle;
     Label      lblController;
     Label      lblMapping;
+    Label      lblMidiPort;
+
+    GidiProcessor* processor = nullptr;
+    MidiOutput* midiOut = nullptr;
+    MapReader mapReader;
 
     void refresh();
     void toggle();

@@ -87,14 +87,15 @@ int GidiProcessor::parseNote(String note) {
 }
 
 GidiProcessor::GidiProcessor() {
-    GidiProcessor(-1, -1);
+    initialise();
 }
 
-GidiProcessor::GidiProcessor(int controllerIndex, int mappingIndex) {
+GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* componentMap) {
     initialise();
 
     activeControllerIndex = controllerIndex;
-    activeMappingIndex = mappingIndex;    
+    buttonMap = componentMap;
+    msgQueue = new Array<MidiMessage>();
     
     prevButtonState.set("A", false);
     prevButtonState.set("B", false);
@@ -113,7 +114,16 @@ GidiProcessor::GidiProcessor(int controllerIndex, int mappingIndex) {
     prevButtonState.set("Guide", false);
 }
 
-GidiProcessor::~GidiProcessor() { }
+GidiProcessor::~GidiProcessor() {
+    if (buttonMap != nullptr) {
+        delete buttonMap;
+    }
+    if (msgQueue!= nullptr) {
+        delete msgQueue;
+    }
+    buttonMap = nullptr;
+    msgQueue = nullptr;
+}
 
 void GidiProcessor::pulse() {
     SDL_GameControllerUpdate();
@@ -140,14 +150,14 @@ void GidiProcessor::pulse() {
                 if (i.getValue() != prevButtonState[i.getKey()]) {
                     if (i.getValue()) {
                         printf("DEBUG: %s button down.\n", i.getKey().toRawUTF8());
-                        if (buttonMap.contains(i.getKey())) {
-                            msgQueue.add(MidiMessage::noteOn(1, buttonMap[i.getKey()],(uint8)100));
+                        if (buttonMap->contains(i.getKey())) {
+                            // msgQueue.add(MidiMessage::noteOn(1, buttonMap[i.getKey()],(uint8)100));
                         }
                     }
                     else {
                         printf("DEBUG: %s button released.\n", i.getKey().toRawUTF8());
-                        if (buttonMap.contains(i.getKey())) {
-                            msgQueue.add(MidiMessage::noteOff(1, buttonMap[i.getKey()]));
+                        if (buttonMap->contains(i.getKey())) {
+                           //  msgQueue.add(MidiMessage::noteOff(1, buttonMap[i.getKey()]));
                         }
                     }
                 }
@@ -160,3 +170,7 @@ void GidiProcessor::pulse() {
         // game controller is not plugged in
     } 
 }
+
+Array<MidiMessage>* GidiProcessor::getMessageQueue() {
+    return msgQueue;
+} 
