@@ -36,8 +36,6 @@ public:
     void resized() override;
 
 private:
-    //==============================================================================
-    // Your private member variables go here...
     ComboBox   cbControllers; 
     ComboBox   cbMappings;
     ComboBox   cbMidiPorts;

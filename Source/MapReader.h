@@ -10,7 +10,6 @@ using json = nlohmann::json;
 class MapReader {
 
     private:
-        const String PATH = "/dev/gidi/Resources/mappings";
         const String PATH2 = "/home/mason/dev/mdGidi/Resources/mappings";
         const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", 
                                                     "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide");
@@ -59,4 +58,8 @@ class MapReader {
             return componentMap;
         }
 
+        struct MapInfo {
+            String name;
+            String author;
+        };
 };

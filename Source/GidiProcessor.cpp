@@ -150,19 +150,16 @@ void GidiProcessor::pulse() {
             if (prevButtonState.contains(key)) {
                 if (i.getValue() != prevButtonState[key]) {
                     if (i.getValue()) {
-                        printf("DEBUG: %s button down.\n", key.toRawUTF8());
                         if (buttonMap->contains(key)) {
                             int note = buttonMap->operator[](i.getKey());
-                            GidiLogger::log("Sending note on message to " + String(note) + "at velocity 100");
-                            printf("Sending midi message on to note: %d volume: %d\n", note, (uint8)100);
+                            GidiLogger::logMsg("Sending note on message to " + String(note) + " at velocity 100");
                             msgQueue->add(MidiMessage::noteOn(1, note,(uint8)100));
                         }
                     }
                     else {
-                        printf("DEBUG: %s button released.\n", i.getKey().toRawUTF8());
                         if (buttonMap->contains(i.getKey())) {
                             int note = buttonMap->operator[](i.getKey());
-                            printf("Sending midi message off to note: %d\n", note);
+                            GidiLogger::logMsg("Sending note off message to " + String(note));
                             msgQueue->add(MidiMessage::noteOff(1, note));
                         }
                     }
