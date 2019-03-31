@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "GidiLogger.h"
 #include <SDL2/SDL.h>
 
 class GidiProcessor {
@@ -20,7 +21,10 @@ class GidiProcessor {
 
         Array<MidiMessage>* msgQueue;
 
+
+
     public:
+
         static int parseNote(String note);
         static Array<String> ctrlrNames();
         static void updateCtrlrHandles();

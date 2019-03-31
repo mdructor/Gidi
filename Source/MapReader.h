@@ -11,7 +11,9 @@ class MapReader {
 
     private:
         const String PATH = "/dev/gidi/Resources/mappings";
-        const String PATH2 = "/home/mason/dev/gidi/Resources/mappings";
+        const String PATH2 = "/home/mason/dev/mdGidi/Resources/mappings";
+        const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", 
+                                                    "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide");
         Array<json> loadedMaps;
     
 
@@ -44,19 +46,16 @@ class MapReader {
             return names;
         }
 
+
         HashMap<String, int>* getComponentMap(int index) {
             HashMap<String, int> *componentMap = new HashMap<String, int>();
             json rawMap = loadedMaps[index];
 
-            if (rawMap["map"]["A"].is_string()) {
-                componentMap->set("A", GidiProcessor::parseNote(rawMap["map"]["B"].get<std::string>()));
+            for (auto tag : searchTags) {
+                if (rawMap["map"][tag.toStdString()].is_string()) {;
+                    componentMap->set(tag, GidiProcessor::parseNote(rawMap["map"][tag.toStdString()].get<std::string>()));
+                }
             }
-
-            if (rawMap["map"]["B"].is_string()) {
-                componentMap->set("B", GidiProcessor::parseNote(rawMap["map"]["B"].get<std::string>()));
-            }
-
-
             return componentMap;
         }
 

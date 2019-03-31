@@ -17,6 +17,8 @@ MainComponent::MainComponent()
     btnToggle.setButtonText("Start");
     btnToggle.onClick = [this] { toggle(); };
 
+    cbMidiPorts.onChange = [this] { midiChanged(); };
+
     lblController.setText("Controller:", NotificationType::dontSendNotification);
     lblMapping.setText("Mapping:", NotificationType::dontSendNotification);
     lblMidiPort.setText("Midi Port:", NotificationType::dontSendNotification);
@@ -58,6 +60,11 @@ MainComponent::~MainComponent()
         delete processor;
         processor = nullptr;
     }
+    if (midiOut != nullptr) {
+        delete midiOut;
+        midiOut = nullptr;
+    }
+
     shutdownAudio();
 }
 
@@ -85,9 +92,14 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 
     if (processor != nullptr) {
         processor->pulse();
+        MidiBuffer buffer; // buffer to add our message queue to
         for (auto msg : *(processor->getMessageQueue())) {
-            // send midi messages here in a midi buffer
+            buffer.addEvent(msg, 1);
         }
+        midiOut->startBackgroundThread();
+        midiOut->sendBlockOfMessagesNow(buffer); // send buffered messages to MIDI out
+        midiOut->stopBackgroundThread();
+        processor->getMessageQueue()->clear();
     }
 }
 
@@ -167,6 +179,8 @@ void MainComponent::refresh() {
         cbMidiPorts.addItem(name, i);
         ++i;
     }
+    // If LINUX OR MAC:: TODO::
+    cbMidiPorts.addItem("Create new virtual port...", i);
 }
 
 void MainComponent::toggle() {
@@ -182,6 +196,13 @@ void MainComponent::toggle() {
         cbMidiPorts.setEnabled(false);
         processor = new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbControllers.getSelectedId() - 1));
         midiOut = MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1);
+        if (midiOut == nullptr) {
+            printf("Couldn't open midi device...\n");
+        }
+        activeView = new DocumentWindow("Active View", getLookAndFeel().findColour(ResizableWindow::backgroundColourId),
+                                         DocumentWindow::TitleBarButtons::closeButton, true);
+        activeView->setContentOwned(new ActiveView(), true);
+        activeView->setVisible(true);
     }
     else {
         btnToggle.setButtonText("Start");
@@ -192,5 +213,24 @@ void MainComponent::toggle() {
 
         delete processor;
         processor = nullptr;
+
+        delete activeView;
+        activeView = nullptr;
+    }
+}
+
+void MainComponent::midiChanged() {
+
+    if (cbMidiPorts.getSelectedId() == cbMidiPorts.getNumItems()) { // if they selected create new midi portA
+
+        DialogWindow::LaunchOptions dialogOptions;
+        dialogOptions.dialogTitle = "New virtual MIDI port";
+        String* name = new String();
+        dialogOptions.content.set(new NewMidiDialog(name), true);
+        dialogOptions.launchAsync();
+        if (name->isNotEmpty()) {
+            virtualOuts.add(MidiOutput::createNewDevice(*name));
+        }
+        refresh();
     }
 }

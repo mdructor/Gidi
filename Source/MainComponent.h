@@ -11,6 +11,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MapReader.h"
 #include "GidiProcessor.h"
+#include "NewMidiDialog.h"
+#include "ActiveView.h"
 
 //==============================================================================
 /*
@@ -47,10 +49,14 @@ private:
 
     GidiProcessor* processor = nullptr;
     MidiOutput* midiOut = nullptr;
-    MapReader mapReader;
+    Array<MidiOutput*> virtualOuts;
+    MapReader mapReader;        
+
+    DocumentWindow* activeView = nullptr;
 
     void refresh();
     void toggle();
+    void midiChanged();
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

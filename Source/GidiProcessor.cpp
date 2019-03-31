@@ -80,7 +80,7 @@ int GidiProcessor::parseNote(String note) {
             return -1;
         }
         else {
-            result += (12 * (third - '0'));
+            result += (12 * (third - '1'));
         }
     }
     return result;
@@ -146,18 +146,24 @@ void GidiProcessor::pulse() {
         currButtonState.set("Guide", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_GUIDE));
 
         for (HashMap<String, bool>::Iterator i (currButtonState); i.next();) { // Loop through all buttons and check if state has changed
-            if (prevButtonState.contains(i.getKey())) {
-                if (i.getValue() != prevButtonState[i.getKey()]) {
+            String key = i.getKey();
+            if (prevButtonState.contains(key)) {
+                if (i.getValue() != prevButtonState[key]) {
                     if (i.getValue()) {
-                        printf("DEBUG: %s button down.\n", i.getKey().toRawUTF8());
-                        if (buttonMap->contains(i.getKey())) {
-                            // msgQueue.add(MidiMessage::noteOn(1, buttonMap[i.getKey()],(uint8)100));
+                        printf("DEBUG: %s button down.\n", key.toRawUTF8());
+                        if (buttonMap->contains(key)) {
+                            int note = buttonMap->operator[](i.getKey());
+                            GidiLogger::log("Sending note on message to " + String(note) + "at velocity 100");
+                            printf("Sending midi message on to note: %d volume: %d\n", note, (uint8)100);
+                            msgQueue->add(MidiMessage::noteOn(1, note,(uint8)100));
                         }
                     }
                     else {
                         printf("DEBUG: %s button released.\n", i.getKey().toRawUTF8());
                         if (buttonMap->contains(i.getKey())) {
-                           //  msgQueue.add(MidiMessage::noteOff(1, buttonMap[i.getKey()]));
+                            int note = buttonMap->operator[](i.getKey());
+                            printf("Sending midi message off to note: %d\n", note);
+                            msgQueue->add(MidiMessage::noteOff(1, note));
                         }
                     }
                 }
