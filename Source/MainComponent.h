@@ -50,7 +50,8 @@ private:
     Array<MidiOutput*> virtualOuts;
     MapReader mapReader;        
 
-    DocumentWindow* activeView = nullptr;
+    DocumentWindow* activeView = new DocumentWindow("mdGidi - Controller View", getLookAndFeel().findColour(ResizableWindow::backgroundColourId),
+                                         DocumentWindow::TitleBarButtons::minimiseButton, true);
 
     void refresh();
     void toggle();

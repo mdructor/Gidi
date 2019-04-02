@@ -12,6 +12,7 @@ class GidiProcessor {
         static int availableControllers;
         static bool initialised;
         static void initialise();
+        static ChangeBroadcaster changeBroadcaster;
 
         int activeControllerIndex = -1;
 
@@ -21,17 +22,31 @@ class GidiProcessor {
 
         Array<MidiMessage>* msgQueue;
 
-
+        int defaultVelocity = 100;
+        int octaveChange = 0;
+        int pitchChange = 0;
 
     public:
+
+        enum ButtonSpecialFunctions {PitchUp=1, PitchDown=2, OctaveUp=3, OctaveDown=4};
 
         static int parseNote(String note);
         static Array<String> ctrlrNames();
         static void updateCtrlrHandles();
 
         GidiProcessor();
-        GidiProcessor(int controllerIndex, HashMap<String, int>* mapping);
+        GidiProcessor(int controllerIndex, HashMap<String, int>* mapping, int defaultVelocity = 100);
         ~GidiProcessor();
+
+        int getCurrentVelocity() {return defaultVelocity;}
+        void setDefaultVelocity(int velocity) {defaultVelocity = velocity;}
+
+        int getOctaveChange() {return octaveChange;}
+        void setOctaveChange(int val) {octaveChange = val;}
+        int getPitchChange() {return pitchChange;}
+        void setPitchChange(int val) {pitchChange = val;}
+
+        HashMap<String, int>* getButtonMap() {return buttonMap;}
 
         void pulse();
         Array<MidiMessage>* getMessageQueue();

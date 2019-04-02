@@ -41,16 +41,8 @@ public:
 
     void anotherInstanceStarted (const String& commandLine) override
     {
-        // When another instance of the app is launched while this one is running,
-        // this method is invoked, and the commandLine parameter tells you what
-        // the other instance's command-line arguments were.
     }
 
-    //==============================================================================
-    /*
-        This class implements the desktop window that contains an instance of
-        our MainComponent class.
-    */
     class MainWindow    : public DocumentWindow
     {
     public:

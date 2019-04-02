@@ -11,6 +11,8 @@
 //==============================================================================
 MainComponent::MainComponent()
 {    
+    activeView->setContentOwned(new ActiveView(), true);
+
     btnRefresh.setButtonText("Refresh");
     btnRefresh.onClick = [this] { refresh(); };
 
@@ -64,6 +66,9 @@ MainComponent::~MainComponent()
         delete midiOut;
         midiOut = nullptr;
     }
+
+    delete activeView;
+    activeView = nullptr;
 
     shutdownAudio();
 }
@@ -194,17 +199,20 @@ void MainComponent::toggle() {
         cbMappings.setEnabled(false);
         cbControllers.setEnabled(false);
         cbMidiPorts.setEnabled(false);
-        processor = new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbControllers.getSelectedId() - 1));
+        processor = new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbMappings.getSelectedId() - 1));
         midiOut = MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1);
         if (midiOut == nullptr) {
             printf("Couldn't open midi device...\n");
         }
-        activeView = new DocumentWindow("Active View", getLookAndFeel().findColour(ResizableWindow::backgroundColourId),
-                                         DocumentWindow::TitleBarButtons::closeButton, true);
-        activeView->setContentOwned(new ActiveView(), true);
         activeView->setVisible(true);
+        ActiveView* comp = (ActiveView*) activeView->getContentComponent();
+        comp->setActiveProcessor(processor);
+        comp->setMapInfo(mapReader.getMapInfo(cbMappings.getSelectedId() - 1));
     }
     else {
+        ActiveView* comp = (ActiveView*) activeView->getContentComponent();
+        comp->removeActiveProcessor();
+
         btnToggle.setButtonText("Start");
         btnRefresh.setEnabled(true);
         cbMappings.setEnabled(true);
@@ -214,8 +222,7 @@ void MainComponent::toggle() {
         delete processor;
         processor = nullptr;
 
-        delete activeView;
-        activeView = nullptr;
+        activeView->setVisible(false);
     }
 }
 

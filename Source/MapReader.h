@@ -51,7 +51,7 @@ class MapReader {
             json rawMap = loadedMaps[index];
 
             for (auto tag : searchTags) {
-                if (rawMap["map"][tag.toStdString()].is_string()) {;
+                if (rawMap["map"][tag.toStdString()].is_string()) {
                     componentMap->set(tag, GidiProcessor::parseNote(rawMap["map"][tag.toStdString()].get<std::string>()));
                 }
             }
@@ -62,4 +62,16 @@ class MapReader {
             String name;
             String author;
         };
+
+        MapInfo getMapInfo(int index) {
+            MapInfo info;
+            json rawMap = loadedMaps[index];
+            if (rawMap["info"]["name"].is_string()) {
+                info.name = rawMap["info"]["name"].get<std::string>();
+            }
+            if (rawMap["info"]["author"].is_string()) {
+                info.author = rawMap["info"]["author"].get<std::string>();
+            }
+            return info;
+        }
 };

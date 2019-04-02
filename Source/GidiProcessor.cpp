@@ -3,6 +3,7 @@
 SDL_GameController* GidiProcessor::controllerHandles[MAX_CONTROLLERS];
 int GidiProcessor::availableControllers;
 bool GidiProcessor::initialised;
+ChangeBroadcaster GidiProcessor::changeBroadcaster;
 
 void GidiProcessor::initialise() {
     if (!initialised) {
@@ -37,6 +38,23 @@ Array<String> GidiProcessor::ctrlrNames()
 }    
 
 int GidiProcessor::parseNote(String note) {
+
+    // Also handle parsing Special Button Functions here. probably a bad idea but can 
+    // fix it later
+    // TODO:: ME
+    if (note == "OctaveUp") {
+        return ButtonSpecialFunctions::OctaveUp; 
+    }
+    else if(note == "OctaveDown") {
+        return ButtonSpecialFunctions::OctaveDown;
+    }
+    else if (note == "PitchUp") {
+        return ButtonSpecialFunctions::PitchUp;
+    }
+    else if (note == "PitchDown") {
+        return ButtonSpecialFunctions::PitchDown;
+    }
+
     int result = 0; 
     note = note.trim();
     if (note.length() < 2 || note.length() > 3) { // invalid note string
@@ -90,8 +108,10 @@ GidiProcessor::GidiProcessor() {
     initialise();
 }
 
-GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* componentMap) {
+GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* componentMap, int defVel) {
     initialise();
+
+    defaultVelocity = defVel;
 
     activeControllerIndex = controllerIndex;
     buttonMap = componentMap;
@@ -151,16 +171,49 @@ void GidiProcessor::pulse() {
                 if (i.getValue() != prevButtonState[key]) {
                     if (i.getValue()) {
                         if (buttonMap->contains(key)) {
-                            int note = buttonMap->operator[](i.getKey());
-                            GidiLogger::logMsg("Sending note on message to " + String(note) + " at velocity 100");
-                            msgQueue->add(MidiMessage::noteOn(1, note,(uint8)100));
+                            int note = buttonMap->operator[](key);
+                            switch(note) {
+                                case ButtonSpecialFunctions::OctaveUp:
+                                    GidiLogger::logMsg("Octave up message sent");
+                                    ++octaveChange;
+                                    break;
+                                case ButtonSpecialFunctions::OctaveDown:
+                                    GidiLogger::logMsg("Octave down message sent");
+                                    --octaveChange;
+                                    break;
+                                case ButtonSpecialFunctions::PitchDown:
+                                    GidiLogger::logMsg("Pitch down message sent");
+                                    --pitchChange;
+                                    break;
+                                case ButtonSpecialFunctions::PitchUp:
+                                    GidiLogger::logMsg("Pitch up message sent");
+                                    ++pitchChange;
+                                    break;
+                                default:
+                                    note += octaveChange * 12;
+                                    note += pitchChange;
+                                    GidiLogger::logMsg("Sending note on message to " + String(note) + " at velocity " + String(defaultVelocity));
+                                    msgQueue->add(MidiMessage::noteOn(1, note,(uint8)defaultVelocity));
+                                    break;
+                            }
                         }
                     }
                     else {
-                        if (buttonMap->contains(i.getKey())) {
+                        if (buttonMap->contains(key)) {
                             int note = buttonMap->operator[](i.getKey());
-                            GidiLogger::logMsg("Sending note off message to " + String(note));
-                            msgQueue->add(MidiMessage::noteOff(1, note));
+                            switch(note) {
+                                case ButtonSpecialFunctions::OctaveUp:
+                                case ButtonSpecialFunctions::OctaveDown:
+                                case ButtonSpecialFunctions::PitchDown:
+                                case ButtonSpecialFunctions::PitchUp:
+                                    break;
+                                default:
+                                    note += octaveChange * 12;
+                                    note += pitchChange;
+                                    GidiLogger::logMsg("Sending note off message to " + String(note));
+                                    msgQueue->add(MidiMessage::noteOff(1, note));
+                                    break;
+                            }
                         }
                     }
                 }
