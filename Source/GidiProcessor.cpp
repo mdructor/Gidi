@@ -192,7 +192,7 @@ void GidiProcessor::pulse() {
                                 default:
                                     note += octaveChange * 12;
                                     note += pitchChange;
-                                    GidiLogger::logMsg("Sending note on message to " + String(note) + " at velocity " + String(defaultVelocity));
+                                    GidiLogger::logMsg("Note on: " + String(note) + " @ velocity: " + String(defaultVelocity));
                                     msgQueue->add(MidiMessage::noteOn(1, note,(uint8)defaultVelocity));
                                     break;
                             }
@@ -210,7 +210,7 @@ void GidiProcessor::pulse() {
                                 default:
                                     note += octaveChange * 12;
                                     note += pitchChange;
-                                    GidiLogger::logMsg("Sending note off message to " + String(note));
+                                    GidiLogger::logMsg("Note off: " + String(note));
                                     msgQueue->add(MidiMessage::noteOff(1, note));
                                     break;
                             }

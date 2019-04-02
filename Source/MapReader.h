@@ -11,12 +11,13 @@ class MapReader {
 
     private:
         const String PATH2 = "/home/mason/dev/mdGidi/Resources/mappings";
-        const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", 
-                                                    "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide");
         Array<json> loadedMaps;
     
 
     public:
+        const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", 
+                                                    "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide");
+
         MapReader() {
             File dir(PATH2);
             if (dir.exists() && dir.isDirectory()) {

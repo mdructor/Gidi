@@ -98,7 +98,9 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     if (processor != nullptr) {
         processor->pulse();
         MidiBuffer buffer; // buffer to add our message queue to
+        ActiveView* comp = (ActiveView*) activeView->getContentComponent();
         for (auto msg : *(processor->getMessageQueue())) {
+            comp->sendVisualKeyboardMessage(msg);
             buffer.addEvent(msg, 1);
         }
         midiOut->startBackgroundThread();

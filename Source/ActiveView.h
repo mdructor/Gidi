@@ -12,6 +12,10 @@ class ActiveView : public Component, public ChangeListener {
 
     private:
 
+        // Using this as a universal controller button ID
+        const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", 
+                                                    "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide"); 
+        // GUI Stuff
         TextEditor txtMapInfo;
         TextEditor txtLog;
         Slider     sldrVelocity;
@@ -20,7 +24,10 @@ class ActiveView : public Component, public ChangeListener {
         Label      lblVelocity;
         Label      lblOctave;
         Label      lblPitch;
-        Array<ControllerButton*> ctrlrBtns;
+        HashMap<String, ControllerButton*>* ctrlrBtns;
+        MidiKeyboardState keyboardState;
+        MidiKeyboardComponent* midiVisual = new MidiKeyboardComponent(keyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard);
+
 
         GidiProcessor* activeProcessor = nullptr;
 
@@ -44,6 +51,7 @@ class ActiveView : public Component, public ChangeListener {
         void onSldrPitchChange();
         void setMapInfo(MapReader::MapInfo mapInfo);
         void drawMapInfo();
+        void sendVisualKeyboardMessage(const MidiMessage& message);
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ActiveView)

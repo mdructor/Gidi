@@ -14,48 +14,53 @@ void ActiveView::resized()
     lblOctave.setBounds(115, 175, 100, 15);
     lblPitch.setBounds(225, 175, 100, 15);
 
-    ctrlrBtns[0]->setBounds(235, 65, 30, 30); // right four
-    ctrlrBtns[1]->setBounds(210, 90, 30, 30); // right four
-    ctrlrBtns[2]->setBounds(260, 90, 30, 30); // right four
-    ctrlrBtns[3]->setBounds(235, 115, 30, 30); // right four
-    ctrlrBtns[4]->setBounds(130, 70, 25, 25); // guide button
-    ctrlrBtns[5]->setBounds(85, 125, 45, 45); // left stick
-    ctrlrBtns[6]->setBounds(165, 125, 45, 45); // right stick
-    ctrlrBtns[7]->setBounds(55, 65, 20, 35); // up dpad
-    ctrlrBtns[8]->setBounds(55, 110, 20, 35); // down dpad
-    ctrlrBtns[9]->setBounds(25, 95, 35, 20); //left dpad
-    ctrlrBtns[10]->setBounds(70, 95, 35, 20); // right dpad
-    ctrlrBtns[11]->setBounds(60, 35, 50, 20); //leftbumper 
-    ctrlrBtns[12]->setBounds(210, 35, 50, 20); // rightbumper 
-    ctrlrBtns[13]->setBounds(60, 0, 50, 40); //left trigger 
-    ctrlrBtns[14]->setBounds(210, 0, 50, 40); // right trigger 
+    ctrlrBtns->operator[]("Y")->setBounds(235, 65, 30, 30); // right four
+    ctrlrBtns->operator[]("X")->setBounds(210, 90, 30, 30); // right four
+    ctrlrBtns->operator[]("B")->setBounds(260, 90, 30, 30); // right four
+    ctrlrBtns->operator[]("A")->setBounds(235, 115, 30, 30); // right four
+    ctrlrBtns->operator[]("Guide")->setBounds(130, 70, 25, 25); // guide button
+    ctrlrBtns->operator[]("LStick")->setBounds(85, 125, 45, 45); // left stick
+    ctrlrBtns->operator[]("RStick")->setBounds(165, 125, 45, 45); // right stick
+    ctrlrBtns->operator[]("DpadUp")->setBounds(55, 65, 20, 35); // up dpad
+    ctrlrBtns->operator[]("DpadDown")->setBounds(55, 110, 20, 35); // down dpad
+    ctrlrBtns->operator[]("DpadLeft")->setBounds(25, 95, 35, 20); //left dpad
+    ctrlrBtns->operator[]("DpadRight")->setBounds(70, 95, 35, 20); // right dpad
+    ctrlrBtns->operator[]("LBmpr")->setBounds(60, 35, 50, 20); //leftbumper 
+    ctrlrBtns->operator[]("RBmpr")->setBounds(210, 35, 50, 20); // rightbumper 
+    ctrlrBtns->operator[]("LTrigger")->setBounds(60, 0, 50, 40); //left trigger 
+    ctrlrBtns->operator[]("RTrigger")->setBounds(210, 0, 50, 40); // right trigger */
+
+    midiVisual->setBounds(5, 310, 520, 80);
 }
         
 void ActiveView::compBtnStateChanged(ControllerButton* source) {
     if (source->isMouseOver()) {
-        if (source == ctrlrBtns[0]) {
-            int compVal = activeProcessor->getButtonMap()->operator[]("Y");
-            String builder = "Y Button:\n";
-            switch (compVal) {
-                case GidiProcessor::ButtonSpecialFunctions::OctaveDown:
-                    builder += "Octave Down\n";
-                    break;
-                case GidiProcessor::ButtonSpecialFunctions::OctaveUp:
-                    builder += "Octave Up\n";
-                    break;
-                case GidiProcessor::ButtonSpecialFunctions::PitchDown:
-                    builder += "Pitch Down\n";
-                    break;
-                case GidiProcessor::ButtonSpecialFunctions::PitchUp:
-                    builder += "Pitch Up\n";
-                    break;
-                default:
-                    builder += "Note On: " + String(compVal) + "\n";
+        if (ctrlrBtns->containsValue(source)) {
+            for (auto tag : searchTags) {
+                if (ctrlrBtns->contains(tag)) {
+                    if (ctrlrBtns->operator[](tag) == source) {
+                        int compVal = activeProcessor->getButtonMap()->operator[](tag);
+                        String builder = tag + " Button:\n";
+                        switch (compVal) {
+                            case GidiProcessor::ButtonSpecialFunctions::OctaveDown:
+                                builder += "Octave Down\n";
+                                break;
+                            case GidiProcessor::ButtonSpecialFunctions::OctaveUp:
+                                builder += "Octave Up\n";
+                                break;
+                            case GidiProcessor::ButtonSpecialFunctions::PitchDown:
+                                builder += "Pitch Down\n";
+                                break;
+                            case GidiProcessor::ButtonSpecialFunctions::PitchUp:
+                                builder += "Pitch Up\n";
+                                break;
+                            default:
+                                builder += "Note On: " + String(compVal) + "\n";
+                        }
+                        txtMapInfo.setText(builder);
+                    }
+                }
             }
-            txtMapInfo.setText(builder);
-        }
-        else {
-            txtMapInfo.setText("COMPONENT INFO");
         }
     }
     else {
@@ -92,19 +97,42 @@ ActiveView::ActiveView() {
     lblPitch.setText("Pitch", NotificationType::dontSendNotification);
     lblPitch.setJustificationType(Justification::centred);
 
-    for (int i = 0; i < 7; ++i) {
-        ctrlrBtns.add(new ControllerButton());
-    }
-    ctrlrBtns.add(new ControllerButton(ControllerButton::ButtonType::DpadVert));
-    ctrlrBtns.add(new ControllerButton(ControllerButton::ButtonType::DpadVert));
-    ctrlrBtns.add(new ControllerButton(ControllerButton::ButtonType::DpadHori));
-    ctrlrBtns.add(new ControllerButton(ControllerButton::ButtonType::DpadHori));
-    ctrlrBtns.add(new ControllerButton(ControllerButton::ButtonType::Bumper));
-    ctrlrBtns.add(new ControllerButton(ControllerButton::ButtonType::Bumper));
-    ctrlrBtns.add(new ControllerButton(ControllerButton::ButtonType::Trigger));
-    ctrlrBtns.add(new ControllerButton(ControllerButton::ButtonType::Trigger));
+    ctrlrBtns = new HashMap<String, ControllerButton*>();
 
-    for (ControllerButton* btn : ctrlrBtns) {
+    ctrlrBtns->set("A", new ControllerButton());
+    ctrlrBtns->set("B", new ControllerButton());
+    ctrlrBtns->set("X", new ControllerButton());
+    ctrlrBtns->set("Y", new ControllerButton());
+    ctrlrBtns->set("LStick", new ControllerButton());
+    ctrlrBtns->set("RStick", new ControllerButton());
+    ctrlrBtns->set("Guide", new ControllerButton());
+    ctrlrBtns->set("DpadLeft", 
+                  new ControllerButton(
+                            ControllerButton::ButtonType::DpadHori));
+    ctrlrBtns->set("DpadRight",
+                  new ControllerButton(
+                            ControllerButton::ButtonType::DpadHori));
+    ctrlrBtns->set("DpadUp",
+                    new ControllerButton(
+                            ControllerButton::ButtonType::DpadVert));
+    ctrlrBtns->set("DpadDown",
+                    new ControllerButton(
+                            ControllerButton::ButtonType::DpadVert));
+    ctrlrBtns->set("LBmpr",
+                    new ControllerButton(
+                            ControllerButton::ButtonType::Bumper));
+    ctrlrBtns->set("RBmpr",
+                    new ControllerButton(
+                            ControllerButton::ButtonType::Bumper));
+    ctrlrBtns->set("LTrigger",
+                    new ControllerButton(
+                            ControllerButton::ButtonType::Trigger));
+    ctrlrBtns->set("RTrigger",
+                    new ControllerButton(
+                            ControllerButton::ButtonType::Trigger));
+    
+
+    for (ControllerButton* btn : *ctrlrBtns) {
         btn->onStateChange = [this, btn] {compBtnStateChanged(btn);};
         addAndMakeVisible(btn);
     }
@@ -117,18 +145,21 @@ ActiveView::ActiveView() {
     addAndMakeVisible(lblVelocity);
     addAndMakeVisible(lblOctave);
     addAndMakeVisible(lblPitch);
+    addAndMakeVisible(midiVisual);
 
     GidiLogger::addListener(this);
 
-    setSize(525, 300);
+    setSize(525, 400);
 }
 
 ActiveView::~ActiveView() 
 {
-    for (ControllerButton* btn: ctrlrBtns) {
+    for (ControllerButton* btn: *ctrlrBtns) {
         delete btn;
         btn = nullptr;
     }
+    delete ctrlrBtns;
+    delete midiVisual;
     GidiLogger::removeListener(this);
 }
 
@@ -180,4 +211,8 @@ void ActiveView::setMapInfo(MapReader::MapInfo mapInfo) {
 
 void ActiveView::drawMapInfo() {
     txtMapInfo.setText(strMapInfo);
+}
+
+void ActiveView::sendVisualKeyboardMessage(const MidiMessage& message) {
+    keyboardState.processNextMidiEvent(message);
 }
