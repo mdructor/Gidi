@@ -12,6 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MapReader.h"
 #include "GidiProcessor.h"
+#include "GamepadComponent.h"
 #include "NewMidiDialog.h"
 #include "ActiveView.h"
 
@@ -37,20 +38,36 @@ public:
     void resized() override;
 
 private:
-    ComboBox   cbControllers; 
-    ComboBox   cbMappings;
-    ComboBox   cbMidiPorts;
+
+    ComboBox    cbControllers; 
+    ComboBox    cbMappings;
+    ComboBox    cbMidiPorts;
     ImageButton btnRefresh;
     ImageButton btnSettings;
     ImageButton btnToggle;
-    Label      lblController;
-    Label      lblMapping;
-    Label      lblMidiPort;
+    Label       lblController;
+    Label       lblMapping;
+    Label       lblMidiPort;
 
-    Image      refreshImage = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/refresh-button.png"));
-    Image      settingsIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/settings.png"));
-    Image      playIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/play-button.png"));
-    Image      pauseIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/pause-button.png"));
+    TextEditor txtMapInfo;
+    TextEditor txtLog;
+
+    MidiKeyboardState      keyboardState;
+    MidiKeyboardComponent* midiVisual = new MidiKeyboardComponent(keyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard);
+
+    GamepadComponent* gamepadComponent = new GamepadComponent();
+
+    Label  lblVelocity;
+    Label  lblOctave;
+    Label  lblPitch;
+    Slider sldrVelocity;
+    Slider sldrOctave;
+    Slider sldrPitch;
+
+    Image refreshImage = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/refresh-button.png"));
+    Image settingsIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/settings.png"));
+    Image playIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/play-button.png"));
+    Image pauseIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/pause-button.png"));
 
     GidiProcessor* processor = nullptr;
     MidiOutput* midiOut = nullptr;

@@ -10,25 +10,49 @@
 
 //==============================================================================
 MainComponent::MainComponent()
-{    
+{   
+    // TO REMOVE 
     activeView->setContentOwned(new ActiveView(), true);
 
-    btnRefresh.setButtonText("Refresh");
+    // Button setup
     btnRefresh.setImages(false, true, false, refreshImage, 1, Colours::blue, refreshImage, .5, Colours::blueviolet, refreshImage, .25, Colours::burlywood);
     btnRefresh.onClick = [this] { refresh(); };
-
-    btnToggle.setButtonText("Start");
     btnToggle.setImages(false, true, false, playIcon, 1, Colours::grey, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
     btnToggle.onClick = [this] { toggle(); };
-
     btnSettings.setImages(false, true, false, settingsIcon, 1, Colours::grey, settingsIcon, .5, Colours::lightgrey, settingsIcon, .25, Colours::whitesmoke);
 
+    // Combo box listeners
     cbMidiPorts.onChange = [this] { midiChanged(); };
 
+    // Label init
     lblController.setText("Controller:", NotificationType::dontSendNotification);
     lblMapping.setText("Mapping:", NotificationType::dontSendNotification);
     lblMidiPort.setText("Midi Port:", NotificationType::dontSendNotification);
+    lblOctave.setText("Octave", NotificationType::dontSendNotification);
+    lblVelocity.setText("Velocity", NotificationType::dontSendNotification);
+    lblPitch.setText("Pitch", NotificationType::dontSendNotification);
+    lblOctave.setJustificationType(Justification::centred);
+    lblVelocity.setJustificationType(Justification::centred);
+    lblPitch.setJustificationType(Justification::centred);
 
+    // Setup sliders
+    sldrVelocity.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+    sldrVelocity.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 20);
+    sldrVelocity.setRange(0, 127, 1);
+    //sldrVelocity.onValueChange = [this] { onSldrVelocityChange(); };
+
+    sldrOctave.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+    sldrOctave.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 20);
+    sldrOctave.setRange(-5, 5, 1);
+    //sldrOctave.onValueChange = [this] { onSldrOctaveChange(); };
+    
+
+    sldrPitch.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+    sldrPitch.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 20);
+    sldrPitch.setRange(-11, 11, 1);
+    //sldrPitch.onValueChange = [this] { onSldrPitchChange(); };
+
+    // adding in sections, left column down, then right column down, then footer
     addAndMakeVisible(btnRefresh);
     addAndMakeVisible(btnSettings);
     addAndMakeVisible(btnToggle);
@@ -39,11 +63,22 @@ MainComponent::MainComponent()
     addAndMakeVisible(lblMidiPort);
     addAndMakeVisible(cbMidiPorts);
 
-    refresh();
+    addAndMakeVisible(txtMapInfo);
+
+    addAndMakeVisible(gamepadComponent);
+
+    addAndMakeVisible(lblVelocity);
+    addAndMakeVisible(lblOctave);
+    addAndMakeVisible(lblPitch);
+    addAndMakeVisible(sldrVelocity);
+    addAndMakeVisible(sldrOctave);
+    addAndMakeVisible(sldrPitch);
+
+    addAndMakeVisible (midiVisual);
 
     // Make sure you set the size of the component after
     // you add any child components.
-    setSize (400, 200);
+    setSize (585, 415);
 
     // Some platforms require permissions to open input channels so request that here
     if (RuntimePermissions::isRequired (RuntimePermissions::recordAudio)
@@ -62,6 +97,9 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+    if (gamepadComponent != nullptr) {
+        delete gamepadComponent;
+    }
     // This shuts down the audio device and clears the audio source.
     if (processor != nullptr) {
         delete processor;
@@ -72,10 +110,45 @@ MainComponent::~MainComponent()
         midiOut = nullptr;
     }
 
+    delete midiVisual;
+
     delete activeView;
     activeView = nullptr;
 
     shutdownAudio();
+}
+
+void MainComponent::resized()
+{
+    // Top Left Quadrant of Combo Boxes/labels
+    lblMidiPort.setBounds(5, 15, 100, 25);
+    cbMidiPorts.setBounds(80, 15, 200, 25);
+    lblController.setBounds(5, 50, 100, 25);
+    cbControllers.setBounds(80, 50, 200, 25);
+    lblMapping.setBounds(5, 85, 100, 25);
+    cbMappings.setBounds(80, 85, 200, 25);
+
+    // Buttons underneath combo box section
+    btnRefresh.setBounds(30, 130, 30, 30);
+    btnSettings.setBounds(130, 130, 30, 30);
+    btnToggle.setBounds(230, 130, 30, 30);
+
+    // text boxes below buttons on left side
+    txtMapInfo.setBounds(10, 175, 270, 128);
+
+    // keyboard component at footer
+    midiVisual->setBounds(10, 315, 565, 90);
+
+    // gamepad component at top right
+    gamepadComponent->setBounds(280, 15, 290, 175);
+
+    // sliders on right
+    lblVelocity.setBounds(290, 200, 80, 15);
+    lblOctave.setBounds(390, 200, 80, 15);
+    lblPitch.setBounds(490, 200, 80, 15);
+    sldrVelocity.setBounds(290, 215, 80, 80);
+    sldrOctave.setBounds(390, 215, 80, 80);
+    sldrPitch.setBounds(490, 215, 80, 80);
 }
 
 //==============================================================================
@@ -132,21 +205,6 @@ void MainComponent::paint (Graphics& g)
     // You can add your drawing code here!
 }
 
-void MainComponent::resized()
-{
-    // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
-    lblMidiPort.setBounds(5, 25, 100, 25);
-    cbMidiPorts.setBounds(100, 25, 250, 25);
-    lblController.setBounds(5, 75, 100, 25);
-    cbControllers.setBounds(100, 75, 250, 25);
-    lblMapping.setBounds(5, 125, 100, 25);
-    cbMappings.setBounds(100, 125, 250, 25);
-    btnRefresh.setBounds(360, 80, 30, 30);
-    btnSettings.setBounds(360, 20, 30, 30);
-    btnToggle.setBounds(360, 140, 30, 30);
-}
 
 void MainComponent::refresh() {
     GidiProcessor::updateCtrlrHandles();
@@ -178,7 +236,6 @@ void MainComponent::refresh() {
         }
     }
 
-    
     cbMappings.clear();
     int i = 1;
     for (auto name : mapReader.getLoadedMapNames()) {
