@@ -14,10 +14,14 @@ MainComponent::MainComponent()
     activeView->setContentOwned(new ActiveView(), true);
 
     btnRefresh.setButtonText("Refresh");
+    btnRefresh.setImages(false, true, false, refreshImage, 1, Colours::blue, refreshImage, .5, Colours::blueviolet, refreshImage, .25, Colours::burlywood);
     btnRefresh.onClick = [this] { refresh(); };
 
     btnToggle.setButtonText("Start");
+    btnToggle.setImages(false, true, false, playIcon, 1, Colours::grey, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
     btnToggle.onClick = [this] { toggle(); };
+
+    btnSettings.setImages(false, true, false, settingsIcon, 1, Colours::grey, settingsIcon, .5, Colours::lightgrey, settingsIcon, .25, Colours::whitesmoke);
 
     cbMidiPorts.onChange = [this] { midiChanged(); };
 
@@ -26,6 +30,7 @@ MainComponent::MainComponent()
     lblMidiPort.setText("Midi Port:", NotificationType::dontSendNotification);
 
     addAndMakeVisible(btnRefresh);
+    addAndMakeVisible(btnSettings);
     addAndMakeVisible(btnToggle);
     addAndMakeVisible(cbControllers);
     addAndMakeVisible(cbMappings);
@@ -138,8 +143,9 @@ void MainComponent::resized()
     cbControllers.setBounds(100, 75, 250, 25);
     lblMapping.setBounds(5, 125, 100, 25);
     cbMappings.setBounds(100, 125, 250, 25);
-    btnRefresh.setBounds(25, 160, 150, 25);
-    btnToggle.setBounds(225, 160, 150, 25);
+    btnRefresh.setBounds(360, 80, 30, 30);
+    btnSettings.setBounds(360, 20, 30, 30);
+    btnToggle.setBounds(360, 140, 30, 30);
 }
 
 void MainComponent::refresh() {
@@ -197,6 +203,7 @@ void MainComponent::toggle() {
 
     if (processor == nullptr) { // must be off
         btnToggle.setButtonText("Stop");
+        btnToggle.setImages(false, true, false, pauseIcon, 1, Colours::grey, pauseIcon, .5, Colours::lightgrey, pauseIcon, .25, Colours::whitesmoke);
         btnRefresh.setEnabled(false);
         cbMappings.setEnabled(false);
         cbControllers.setEnabled(false);
@@ -216,6 +223,7 @@ void MainComponent::toggle() {
         comp->removeActiveProcessor();
 
         btnToggle.setButtonText("Start");
+        btnToggle.setImages(false, true, false, playIcon, 1, Colours::grey, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
         btnRefresh.setEnabled(true);
         cbMappings.setEnabled(true);
         cbControllers.setEnabled(true);

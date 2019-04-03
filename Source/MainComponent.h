@@ -6,6 +6,7 @@
   ==============================================================================
 */
 
+/* NEW UI REWRITE: https://wireframe.cc/Q4Cq0n */
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
@@ -39,11 +40,17 @@ private:
     ComboBox   cbControllers; 
     ComboBox   cbMappings;
     ComboBox   cbMidiPorts;
-    TextButton btnRefresh;
-    TextButton btnToggle;
+    ImageButton btnRefresh;
+    ImageButton btnSettings;
+    ImageButton btnToggle;
     Label      lblController;
     Label      lblMapping;
     Label      lblMidiPort;
+
+    Image      refreshImage = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/refresh-button.png"));
+    Image      settingsIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/settings.png"));
+    Image      playIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/play-button.png"));
+    Image      pauseIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/pause-button.png"));
 
     GidiProcessor* processor = nullptr;
     MidiOutput* midiOut = nullptr;
