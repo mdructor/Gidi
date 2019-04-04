@@ -10,9 +10,6 @@ class GidiProcessor : public ChangeBroadcaster {
         const static int MAX_CONTROLLERS = 4;
         static SDL_GameController* controllerHandles[MAX_CONTROLLERS];
         static int availableControllers;
-        static bool initialised;
-        static void initialise();
-
 
         int activeControllerIndex = -1;
 

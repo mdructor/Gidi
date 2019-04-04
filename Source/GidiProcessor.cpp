@@ -2,17 +2,9 @@
 
 SDL_GameController* GidiProcessor::controllerHandles[MAX_CONTROLLERS];
 int GidiProcessor::availableControllers;
-bool GidiProcessor::initialised;
 
-void GidiProcessor::initialise() {
-    if (!initialised) {
-        SDL_Init(SDL_INIT_GAMECONTROLLER);
-        initialised = true;
-    }
-}
 
 void GidiProcessor::updateCtrlrHandles() {
-    initialise();
     int cIndex = 0;
     for (int jIndex=0; jIndex < SDL_NumJoysticks(); ++jIndex) {
         if (!SDL_IsGameController(jIndex)) {
@@ -29,7 +21,6 @@ void GidiProcessor::updateCtrlrHandles() {
 
 Array<String> GidiProcessor::getCtrlrNames() 
 {
-    initialise();
     Array<String> names;
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         if (SDL_IsGameController(i)) {
@@ -107,11 +98,9 @@ int GidiProcessor::parseNote(String note) {
 }
 
 GidiProcessor::GidiProcessor() {
-    initialise();
 }
 
 GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* componentMap, int defVel) {
-    initialise();
 
     defaultVelocity = defVel;
 

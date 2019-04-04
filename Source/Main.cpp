@@ -11,6 +11,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
 
+#define SDL_MAIN_HANDLED
+#include <SDL2/SDL.h>
+
 //==============================================================================
 class mdGidiApplication  : public JUCEApplication
 {
@@ -25,11 +28,14 @@ public:
     //==============================================================================
     void initialise (const String& commandLine) override
     {
+        SDL_SetMainReady();
+        SDL_Init(SDL_INIT_GAMECONTROLLER);
         mainWindow.reset (new MainWindow (getApplicationName()));
     }
 
     void shutdown() override
     {
+        SDL_Quit();
         mainWindow = nullptr; // (deletes our window)
     }
 
