@@ -14,14 +14,13 @@
 #include "GidiProcessor.h"
 #include "GamepadComponent.h"
 #include "NewMidiDialog.h"
-#include "ActiveView.h"
 
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent   : public AudioAppComponent
+class MainComponent   : public AudioAppComponent, public ChangeListener
 {
 public:
     //==============================================================================
@@ -36,6 +35,7 @@ public:
     //==============================================================================
     void paint (Graphics& g) override;
     void resized() override;
+    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
 
@@ -48,15 +48,10 @@ private:
     Label       lblController;
     Label       lblMapping;
     Label       lblMidiPort;
-
     TextEditor txtMapInfo;
-    TextEditor txtLog;
-
     MidiKeyboardState      keyboardState;
     MidiKeyboardComponent* midiVisual = new MidiKeyboardComponent(keyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard);
-
     GamepadComponent* gamepadComponent = new GamepadComponent();
-
     Label  lblVelocity;
     Label  lblOctave;
     Label  lblPitch;
@@ -74,13 +69,17 @@ private:
     Array<MidiOutput*> virtualOuts;
     MapReader mapReader;        
 
-    DocumentWindow* activeView = new DocumentWindow("mdGidi - Controller View", getLookAndFeel().findColour(ResizableWindow::backgroundColourId),
-                                         DocumentWindow::TitleBarButtons::minimiseButton, true);
+    bool isProcessing = false;
 
-    void refresh();
+    void refreshComboBoxes();
     void toggle();
     void midiChanged();
 
+    void onSldrVelocityChange();
+    void onSldrOctaveChange();
+    void onSldrPitchChange();
+
+    void onGamepadButtonStateChange(ControllerButton* src);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

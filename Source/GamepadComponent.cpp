@@ -36,7 +36,6 @@ GamepadComponent::GamepadComponent() {
                             ControllerButton::ButtonType::Trigger));
     
     for (ControllerButton* btn : *ctrlrBtns) {
-        // btn->onStateChange = [this, btn] {compBtnStateChanged(btn);};
         addAndMakeVisible(btn);
     }
 

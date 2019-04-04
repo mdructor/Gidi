@@ -11,12 +11,9 @@
 //==============================================================================
 MainComponent::MainComponent()
 {   
-    // TO REMOVE 
-    activeView->setContentOwned(new ActiveView(), true);
-
     // Button setup
     btnRefresh.setImages(false, true, false, refreshImage, 1, Colours::blue, refreshImage, .5, Colours::blueviolet, refreshImage, .25, Colours::burlywood);
-    btnRefresh.onClick = [this] { refresh(); };
+    btnRefresh.onClick = [this] { refreshComboBoxes(); };
     btnToggle.setImages(false, true, false, playIcon, 1, Colours::grey, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
     btnToggle.onClick = [this] { toggle(); };
     btnSettings.setImages(false, true, false, settingsIcon, 1, Colours::grey, settingsIcon, .5, Colours::lightgrey, settingsIcon, .25, Colours::whitesmoke);
@@ -39,18 +36,30 @@ MainComponent::MainComponent()
     sldrVelocity.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     sldrVelocity.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 20);
     sldrVelocity.setRange(0, 127, 1);
-    //sldrVelocity.onValueChange = [this] { onSldrVelocityChange(); };
+    sldrVelocity.setEnabled(false);
+    sldrVelocity.onValueChange = [this] { onSldrVelocityChange(); };
 
     sldrOctave.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     sldrOctave.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 20);
     sldrOctave.setRange(-5, 5, 1);
-    //sldrOctave.onValueChange = [this] { onSldrOctaveChange(); };
+    sldrOctave.setEnabled(false);
+    sldrOctave.onValueChange = [this] { onSldrOctaveChange(); };
     
 
     sldrPitch.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
     sldrPitch.setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxBelow, false, 50, 20);
     sldrPitch.setRange(-11, 11, 1);
-    //sldrPitch.onValueChange = [this] { onSldrPitchChange(); };
+    sldrPitch.setEnabled(false);
+    sldrPitch.onValueChange = [this] { onSldrPitchChange(); };
+
+    txtMapInfo.setMultiLine(true);
+    txtMapInfo.setReadOnly(true);
+    txtMapInfo.setText("Welcome to Gidi!\nSelect a midi port, controller, and mapping then press the play button to begin!\n");
+
+    gamepadComponent->setEnabled(false);
+    for (auto btn : *gamepadComponent->ctrlrBtns) {
+        btn->onStateChange = [this,btn] {onGamepadButtonStateChange(btn);};
+    }
 
     // adding in sections, left column down, then right column down, then footer
     addAndMakeVisible(btnRefresh);
@@ -92,7 +101,7 @@ MainComponent::MainComponent()
         // Specify the number of input and output channels that we want to open
         setAudioChannels (2, 2);
     }
-    refresh();
+    refreshComboBoxes();
 }
 
 MainComponent::~MainComponent()
@@ -111,9 +120,6 @@ MainComponent::~MainComponent()
     }
 
     delete midiVisual;
-
-    delete activeView;
-    activeView = nullptr;
 
     shutdownAudio();
 }
@@ -173,18 +179,22 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     // (to prevent the output of random noise)
     bufferToFill.clearActiveBufferRegion();
 
-    if (processor != nullptr) {
+    if (isProcessing) {
         processor->pulse();
         MidiBuffer buffer; // buffer to add our message queue to
-        ActiveView* comp = (ActiveView*) activeView->getContentComponent();
         for (auto msg : *(processor->getMessageQueue())) {
-            comp->sendVisualKeyboardMessage(msg);
+            keyboardState.processNextMidiEvent(msg);
             buffer.addEvent(msg, 1);
         }
         midiOut->startBackgroundThread();
         midiOut->sendBlockOfMessagesNow(buffer); // send buffered messages to MIDI out
         midiOut->stopBackgroundThread();
         processor->getMessageQueue()->clear();
+    } else {
+        if (processor != nullptr) {
+            delete processor;
+            processor = nullptr;
+        }
     }
 }
 
@@ -206,28 +216,15 @@ void MainComponent::paint (Graphics& g)
 }
 
 
-void MainComponent::refresh() {
-    GidiProcessor::updateCtrlrHandles();
-    StringArray names = GidiProcessor::ctrlrNames();
-    StringArray cbNames;
+void MainComponent::refreshComboBoxes() {
+
+    StringArray names = GidiProcessor::getCtrlrNames(); // get list of current connected controllers
+    StringArray cbNames; // populate list of controllers we have in available in the combo box
     for (int i = 0; i < cbControllers.getNumItems(); ++i) {
         cbNames.add(cbControllers.getItemText(i));
     }
-
-    bool diff = false;
-
-    if (names.size() != cbNames.size()) {
-        diff = true;
-    }
-    else {
-        for (int i = 0; i < names.size(); ++i) {
-            if (names[i] != cbNames[i]) {
-                diff = true;
-            }
-        }
-    }
-
-    if (diff) {
+    // ctrlrDiff the lists to see if they are different
+    if (names != cbNames) { // if they were
         cbControllers.clear();
         int i = 1;
         for (auto name : names) {
@@ -236,49 +233,79 @@ void MainComponent::refresh() {
         }
     }
 
-    cbMappings.clear();
-    int i = 1;
+    names.clear();
+    cbNames.clear();
     for (auto name : mapReader.getLoadedMapNames()) {
-        cbMappings.addItem(name, i);
-        ++i;
-    } 
-
-    cbMidiPorts.clear();
-    i = 1;
-    for (auto name : MidiOutput::getDevices()) {
-        cbMidiPorts.addItem(name, i);
-        ++i;
+        names.add(name);
     }
-    // If LINUX OR MAC:: TODO::
-    cbMidiPorts.addItem("Create new virtual port...", i);
+    for (int i = 0; i < cbMappings.getNumItems(); ++i) {
+        cbNames.add(cbMappings.getItemText(i));
+    }
+    if (names != cbNames) { // if they were different
+        cbMappings.clear();
+        int i = 1;
+        for (auto name : names) {
+            cbMappings.addItem(name, i);
+            ++i;
+        }
+    }
+
+    names.clear();
+    cbNames.clear();
+    for (auto name : MidiOutput::getDevices()) {
+        names.add(name);
+    }
+    for (int i = 0; i < cbMidiPorts.getNumItems(); ++i) {
+        cbNames.add(cbMidiPorts.getItemText(i));
+    }
+    cbNames.removeString("Create new virtual port...");
+    int i = 1;
+    if (names != cbNames) { // if they were different
+        cbMidiPorts.clear();
+        for (auto name : names) {
+            cbMidiPorts.addItem(name, i);
+            ++i;
+        }
+        cbMidiPorts.addItem("Create new virtual port...", i);
+    }
 }
 
 void MainComponent::toggle() {
     if (cbControllers.getSelectedId() == 0 || cbMappings.getSelectedId() == 0 || cbMidiPorts.getSelectedId() == 0) {
-        return;
+        if (!isProcessing) {
+            return;
+        }
     }
 
-    if (processor == nullptr) { // must be off
-        btnToggle.setButtonText("Stop");
+    if (!isProcessing) { // must be off
         btnToggle.setImages(false, true, false, pauseIcon, 1, Colours::grey, pauseIcon, .5, Colours::lightgrey, pauseIcon, .25, Colours::whitesmoke);
         btnRefresh.setEnabled(false);
         cbMappings.setEnabled(false);
         cbControllers.setEnabled(false);
         cbMidiPorts.setEnabled(false);
+        sldrOctave.setEnabled(true);
+        sldrPitch.setEnabled(true);
+        sldrVelocity.setEnabled(true);
+        gamepadComponent->setEnabled(true);
+        GidiProcessor::updateCtrlrHandles();
         processor = new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbMappings.getSelectedId() - 1));
         midiOut = MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1);
         if (midiOut == nullptr) {
             printf("Couldn't open midi device...\n");
         }
-        activeView->setVisible(true);
-        ActiveView* comp = (ActiveView*) activeView->getContentComponent();
-        comp->setActiveProcessor(processor);
-        comp->setMapInfo(mapReader.getMapInfo(cbMappings.getSelectedId() - 1));
+        MapReader::MapInfo mapInfo = mapReader.getMapInfo(cbMappings.getSelectedId() - 1);
+        String info = "Map: " + mapInfo.name + "\n" + "Author: " + mapInfo.author + "\n";
+        txtMapInfo.setText(info);
+
+        sldrOctave.setValue(processor->getOctaveChange());
+        sldrPitch.setValue(processor->getPitchChange());
+        sldrVelocity.setValue(processor->getCurrentVelocity());
+
+        processor->addChangeListener(this);
+
+        isProcessing = true;
     }
     else {
-        ActiveView* comp = (ActiveView*) activeView->getContentComponent();
-        comp->removeActiveProcessor();
-
         btnToggle.setButtonText("Start");
         btnToggle.setImages(false, true, false, playIcon, 1, Colours::grey, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
         btnRefresh.setEnabled(true);
@@ -286,10 +313,15 @@ void MainComponent::toggle() {
         cbControllers.setEnabled(true);
         cbMidiPorts.setEnabled(true);
 
-        delete processor;
-        processor = nullptr;
+        sldrOctave.setEnabled(false);
+        sldrPitch.setEnabled(false);
+        sldrVelocity.setEnabled(false);
+        gamepadComponent->setEnabled(false);
 
-        activeView->setVisible(false);
+        txtMapInfo.setText("Welcome to Gidi!\nSelect a midi port, controller, and mapping then press the play button to begin!\n");
+
+        processor->removeChangeListener(this);
+        isProcessing = false;
     }
 }
 
@@ -305,6 +337,68 @@ void MainComponent::midiChanged() {
         if (name->isNotEmpty()) {
             virtualOuts.add(MidiOutput::createNewDevice(*name));
         }
-        refresh();
+        refreshComboBoxes();
+    }
+}
+
+void MainComponent::onSldrVelocityChange() {
+    if (processor != nullptr) {
+        processor->setDefaultVelocity(sldrVelocity.getValue());
+    }
+}
+
+void MainComponent::onSldrOctaveChange() {
+    if (processor != nullptr) {
+        processor->setOctaveChange(sldrOctave.getValue());
+    }
+}
+
+void MainComponent::onSldrPitchChange() {
+    if (processor != nullptr) {
+        processor->setPitchChange(sldrPitch.getValue());
+    }
+}
+
+void MainComponent::changeListenerCallback(ChangeBroadcaster* source) {
+    sldrOctave.setValue(processor->getOctaveChange());
+    sldrPitch.setValue(processor->getPitchChange());
+    sldrVelocity.setValue(processor->getCurrentVelocity());
+}
+
+void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
+    const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide"); 
+    if (source->isMouseOver()) {
+        if (gamepadComponent->ctrlrBtns->containsValue(source)) {
+            for (auto tag : searchTags) {
+                if (gamepadComponent->ctrlrBtns->contains(tag)) {
+                    if (gamepadComponent->ctrlrBtns->operator[](tag) == source) {
+                        int compVal = processor->getButtonMap()->operator[](tag);
+                        String builder = tag + " Button:\n";
+                        switch (compVal) {
+                            case GidiProcessor::ButtonSpecialFunctions::OctaveDown:
+                                builder += "Octave Down\n";
+                                break;
+                            case GidiProcessor::ButtonSpecialFunctions::OctaveUp:
+                                builder += "Octave Up\n";
+                                break;
+                            case GidiProcessor::ButtonSpecialFunctions::PitchDown:
+                                builder += "Pitch Down\n";
+                                break;
+                            case GidiProcessor::ButtonSpecialFunctions::PitchUp:
+                                builder += "Pitch Up\n";
+                                break;
+                            default:
+                                builder += "Note On: " + String(compVal) + "\n";
+                        }
+                        txtMapInfo.setText(builder);
+                    }
+                }
+            }
+        }
+    }
+    else {
+        MapReader::MapInfo mapInfo = mapReader.getMapInfo(cbMappings.getSelectedId() - 1);
+        String info = "Map: " + mapInfo.name + "\n" + "Author: " + mapInfo.author + "\n";
+        txtMapInfo.setText(info);;
     }
 }

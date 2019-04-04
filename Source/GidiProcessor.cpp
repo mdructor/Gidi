@@ -3,7 +3,6 @@
 SDL_GameController* GidiProcessor::controllerHandles[MAX_CONTROLLERS];
 int GidiProcessor::availableControllers;
 bool GidiProcessor::initialised;
-ChangeBroadcaster GidiProcessor::changeBroadcaster;
 
 void GidiProcessor::initialise() {
     if (!initialised) {
@@ -28,11 +27,14 @@ void GidiProcessor::updateCtrlrHandles() {
     availableControllers = cIndex;
 }
 
-Array<String> GidiProcessor::ctrlrNames() 
+Array<String> GidiProcessor::getCtrlrNames() 
 {
+    initialise();
     Array<String> names;
-    for (int i = 0; i < availableControllers; ++i) {
-        names.add(SDL_GameControllerName(controllerHandles[i]));
+    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+        if (SDL_IsGameController(i)) {
+            names.add(SDL_GameControllerNameForIndex(i));
+        }
     }
     return names;
 }    
@@ -135,13 +137,14 @@ GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* componen
 }
 
 GidiProcessor::~GidiProcessor() {
+    
+    if (msgQueue != nullptr) {
+        delete msgQueue;
+    }
     if (buttonMap != nullptr) {
         delete buttonMap;
     }
-    if (msgQueue!= nullptr) {
-        delete msgQueue;
-    }
-    buttonMap = nullptr;
+    buttonMap = nullptr; 
     msgQueue = nullptr;
 }
 
@@ -176,18 +179,22 @@ void GidiProcessor::pulse() {
                                 case ButtonSpecialFunctions::OctaveUp:
                                     GidiLogger::logMsg("Octave up message sent");
                                     ++octaveChange;
+                                    sendChangeMessage();
                                     break;
                                 case ButtonSpecialFunctions::OctaveDown:
                                     GidiLogger::logMsg("Octave down message sent");
                                     --octaveChange;
+                                    sendChangeMessage();
                                     break;
                                 case ButtonSpecialFunctions::PitchDown:
                                     GidiLogger::logMsg("Pitch down message sent");
                                     --pitchChange;
+                                    sendChangeMessage();
                                     break;
                                 case ButtonSpecialFunctions::PitchUp:
                                     GidiLogger::logMsg("Pitch up message sent");
                                     ++pitchChange;
+                                    sendChangeMessage();
                                     break;
                                 default:
                                     note += octaveChange * 12;

@@ -4,7 +4,7 @@
 #include "GidiLogger.h"
 #include <SDL2/SDL.h>
 
-class GidiProcessor {
+class GidiProcessor : public ChangeBroadcaster {
 
     private:
         const static int MAX_CONTROLLERS = 4;
@@ -12,7 +12,7 @@ class GidiProcessor {
         static int availableControllers;
         static bool initialised;
         static void initialise();
-        static ChangeBroadcaster changeBroadcaster;
+
 
         int activeControllerIndex = -1;
 
@@ -31,7 +31,7 @@ class GidiProcessor {
         enum ButtonSpecialFunctions {PitchUp=1, PitchDown=2, OctaveUp=3, OctaveDown=4};
 
         static int parseNote(String note);
-        static Array<String> ctrlrNames();
+        static Array<String> getCtrlrNames();
         static void updateCtrlrHandles();
 
         GidiProcessor();
@@ -50,5 +50,7 @@ class GidiProcessor {
 
         void pulse();
         Array<MidiMessage>* getMessageQueue();
+
+JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GidiProcessor)
 };
 
