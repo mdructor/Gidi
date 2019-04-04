@@ -9,7 +9,11 @@
             file="Source/GamepadComponent.h"/>
       <FILE id="u6WGR2" name="GidiProcessor.cpp" compile="1" resource="0"
             file="Source/GidiProcessor.cpp"/>
+      <FILE id="pkNL4k" name="OptionsComponent.cpp" compile="1" resource="0"
+            file="Source/OptionsComponent.cpp"/>
       <FILE id="sniKzo" name="GidiProcessor.h" compile="0" resource="0" file="Source/GidiProcessor.h"/>
+      <FILE id="Tweobh" name="OptionsComponent.h" compile="0" resource="0"
+            file="Source/OptionsComponent.h"/>
       <FILE id="bECTHl" name="ControllerButton.h" compile="0" resource="0"
             file="Source/ControllerButton.h"/>
       <FILE id="StWtOH" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

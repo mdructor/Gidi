@@ -17,6 +17,7 @@ MainComponent::MainComponent()
     btnToggle.setImages(false, true, false, playIcon, 1, Colours::grey, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
     btnToggle.onClick = [this] { toggle(); };
     btnSettings.setImages(false, true, false, settingsIcon, 1, Colours::grey, settingsIcon, .5, Colours::lightgrey, settingsIcon, .25, Colours::whitesmoke);
+    btnSettings.onClick = [this] { openOptionsDialog(); };
 
     // Combo box listeners
     cbMidiPorts.onChange = [this] { midiChanged(); };
@@ -339,6 +340,13 @@ void MainComponent::midiChanged() {
         }
         refreshComboBoxes();
     }
+}
+
+void MainComponent::openOptionsDialog() {
+    DialogWindow::LaunchOptions dialogOptions;
+    dialogOptions.dialogTitle = "Advanced Settings";
+    dialogOptions.content.set(new OptionsComponent(), true);
+    dialogOptions.launchAsync();
 }
 
 void MainComponent::onSldrVelocityChange() {

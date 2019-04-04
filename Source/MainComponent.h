@@ -14,6 +14,7 @@
 #include "GidiProcessor.h"
 #include "GamepadComponent.h"
 #include "NewMidiDialog.h"
+#include "OptionsComponent.h"
 
 //==============================================================================
 /*
@@ -74,6 +75,8 @@ private:
     void refreshComboBoxes();
     void toggle();
     void midiChanged();
+
+    void openOptionsDialog();
 
     void onSldrVelocityChange();
     void onSldrOctaveChange();

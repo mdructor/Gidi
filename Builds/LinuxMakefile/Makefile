@@ -70,6 +70,7 @@ endif
 OBJECTS_APP := \
   $(JUCE_OBJDIR)/GamepadComponent_3aaeb25.o \
   $(JUCE_OBJDIR)/GidiProcessor_bda9c94c.o \
+  $(JUCE_OBJDIR)/OptionsComponent_daeb5708.o \
   $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o \
   $(JUCE_OBJDIR)/GidiLogger_1436d360.o \
   $(JUCE_OBJDIR)/Main_90ebc5c2.o \
@@ -108,6 +109,11 @@ $(JUCE_OBJDIR)/GamepadComponent_3aaeb25.o: ../../Source/GamepadComponent.cpp
 $(JUCE_OBJDIR)/GidiProcessor_bda9c94c.o: ../../Source/GidiProcessor.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
 	@echo "Compiling GidiProcessor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/OptionsComponent_daeb5708.o: ../../Source/OptionsComponent.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling OptionsComponent.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o: ../../Source/MainComponent.cpp
