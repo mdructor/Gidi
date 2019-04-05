@@ -1,4 +1,6 @@
 # Gidi
+[sslink]: https://ibb.co/9wqSfj7 "Screenshot"
+![alt text][sslink]
 
 ## Available Platforms
 - linux (tested and developed on)
