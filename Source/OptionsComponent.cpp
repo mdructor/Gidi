@@ -5,9 +5,15 @@ OptionsComponent::OptionsComponent() {
     lblMapDirectory.setText("Mappings Directory: ", NotificationType::dontSendNotification);
 
     txtMapDirectory.setReadOnly(true);
+    txtMapDirectory.setText(AppSettings::getMapDirectory());
+
+    btnMapDirectory.onClick = [this] {onMapDirectory();};
 
     btnCancel.setButtonText("Cancel");
+    btnCancel.onClick = [this] { onButtonCancel(); };
+
     btnSave.setButtonText("Save");
+    btnSave.onClick = [this] { onButtonSave(); };
 
     addAndMakeVisible(lblMapDirectory);
     addAndMakeVisible(txtMapDirectory);
@@ -37,4 +43,26 @@ void OptionsComponent::paint (Graphics& g)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
 
     // You can add your drawing code here!
+}
+
+void OptionsComponent::onButtonCancel() {
+    if (DialogWindow* dw = this->findParentComponentOfClass<DialogWindow>()) {
+        dw->exitModalState(-1);
+    }
+}
+
+void OptionsComponent::onButtonSave() {
+    AppSettings::setMapDirectory(txtMapDirectory.getText());
+    AppSettings::saveAppSettings();
+    if (DialogWindow* dw = this->findParentComponentOfClass<DialogWindow>()) {
+        dw->exitModalState(1);
+    }
+}
+
+void OptionsComponent::onMapDirectory() {
+    FileChooser fileChooser("Select mappings directory...", File::getSpecialLocation(File::userDocumentsDirectory), "*");
+
+    if (fileChooser.browseForDirectory()) {
+        txtMapDirectory.setText(fileChooser.getResult().getFullPathName());
+    }
 }

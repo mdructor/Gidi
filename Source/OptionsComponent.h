@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "AppSettings.h"
 
 class OptionsComponent : public Component 
 {
@@ -14,6 +15,10 @@ class OptionsComponent : public Component
 
         void resized() override;
         void paint(Graphics& g) override;
+
+        void onButtonCancel();
+        void onButtonSave();
+        void onMapDirectory();
 
 
     public:

@@ -10,6 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
+#include "AppSettings.h"
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -30,6 +31,7 @@ public:
     {
         SDL_SetMainReady();
         SDL_Init(SDL_INIT_GAMECONTROLLER);
+        AppSettings::loadAppSettings();
         mainWindow.reset (new MainWindow (getApplicationName()));
     }
 

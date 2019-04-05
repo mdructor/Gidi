@@ -347,6 +347,8 @@ void MainComponent::openOptionsDialog() {
     dialogOptions.dialogTitle = "Advanced Settings";
     dialogOptions.content.set(new OptionsComponent(), true);
     dialogOptions.launchAsync();
+    mapReader.refresh();
+    refreshComboBoxes();
 }
 
 void MainComponent::onSldrVelocityChange() {

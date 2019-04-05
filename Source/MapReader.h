@@ -2,6 +2,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "GidiProcessor.h"
+#include "AppSettings.h"
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -19,20 +20,24 @@ class MapReader {
                                                     "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide");
 
         MapReader() {
-            File dir(PATH2);
+            refresh();
+        }
+
+        ~MapReader() {}
+
+        void refresh() {
+            File dir(AppSettings::getMapDirectory());
+            loadedMaps.clear();
             if (dir.exists() && dir.isDirectory()) {
                 Array<File> maps = dir.findChildFiles(File::TypesOfFileToFind::findFiles, true, "*.json");
                 for (auto map : maps) {
                     loadedMaps.add(json::parse(map.loadFileAsString().toStdString()));
                 }
-
             }
             else {
                 printf("Couldn't find mappings directory...\n");
             }
         }
-
-        ~MapReader() {}
 
         Array<json> getLoadedMaps() {
             return loadedMaps;
