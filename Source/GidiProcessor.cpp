@@ -36,16 +36,22 @@ int GidiProcessor::parseNote(String note) {
     // fix it later
     // TODO:: ME
     if (note == "OctaveUp") {
-        return ButtonSpecialFunctions::OctaveUp; 
+        return ComponentSpecialFunctions::OctaveUp; 
     }
     else if(note == "OctaveDown") {
-        return ButtonSpecialFunctions::OctaveDown;
+        return ComponentSpecialFunctions::OctaveDown;
     }
     else if (note == "PitchUp") {
-        return ButtonSpecialFunctions::PitchUp;
+        return ComponentSpecialFunctions::PitchUp;
     }
     else if (note == "PitchDown") {
-        return ButtonSpecialFunctions::PitchDown;
+        return ComponentSpecialFunctions::PitchDown;
+    }
+    else if (note == "Velocity") {
+        return ComponentSpecialFunctions::Velocity;
+    }
+    else if (note == "PitchBend") {
+        return ComponentSpecialFunctions::PitchBend;
     }
 
     int result = 0; 
@@ -100,12 +106,12 @@ int GidiProcessor::parseNote(String note) {
 GidiProcessor::GidiProcessor() {
 }
 
-GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* componentMap, int defVel) {
+GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* compMap, int defVel) {
 
     defaultVelocity = defVel;
 
     activeControllerIndex = controllerIndex;
-    buttonMap = componentMap;
+    componentMap = compMap;
     msgQueue = new Array<MidiMessage>();
     
     prevButtonState.set("A", false);
@@ -123,6 +129,13 @@ GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* componen
     prevButtonState.set("Start", false);
     prevButtonState.set("Back", false);
     prevButtonState.set("Guide", false);
+
+    prevAxisState.set("LeftTrigger", 0);
+    prevAxisState.set("RightTrigger", 0);
+    prevAxisState.set("LeftStickX", 0);
+    prevAxisState.set("LeftStickY", 0);
+    prevAxisState.set("RightStickY", 0);
+    prevAxisState.set("RightStickX", 0);
 }
 
 GidiProcessor::~GidiProcessor() {
@@ -130,93 +143,22 @@ GidiProcessor::~GidiProcessor() {
     if (msgQueue != nullptr) {
         delete msgQueue;
     }
-    if (buttonMap != nullptr) {
-        delete buttonMap;
+    if (componentMap != nullptr) {
+        delete componentMap;
     }
-    buttonMap = nullptr; 
+    componentMap = nullptr; 
     msgQueue = nullptr;
+
 }
 
 void GidiProcessor::pulse() {
     SDL_GameControllerUpdate();
     SDL_GameController* controller = controllerHandles[activeControllerIndex];
     if (controller != 0 && SDL_GameControllerGetAttached(controller)) {
-        currButtonState.set("A", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_A));
-        currButtonState.set("B", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_B));
-        currButtonState.set("X", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_X));
-        currButtonState.set("Y", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_Y));
-        currButtonState.set("DpadUp", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP));
-        currButtonState.set("DpadDown", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN));
-        currButtonState.set("DpadLeft", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT));
-        currButtonState.set("DpadRight", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT));
-        currButtonState.set("LBmpr", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSHOULDER));
-        currButtonState.set("RBmpr", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER));
-        currButtonState.set("LStick", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSTICK));
-        currButtonState.set("RStick", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSTICK));
-        currButtonState.set("Start", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_START));
-        currButtonState.set("Back", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_BACK));
-        currButtonState.set("Guide", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_GUIDE));
-
-        for (HashMap<String, bool>::Iterator i (currButtonState); i.next();) { // Loop through all buttons and check if state has changed
-            String key = i.getKey();
-            if (prevButtonState.contains(key)) {
-                if (i.getValue() != prevButtonState[key]) {
-                    if (i.getValue()) {
-                        if (buttonMap->contains(key)) {
-                            int note = buttonMap->operator[](key);
-                            switch(note) {
-                                case ButtonSpecialFunctions::OctaveUp:
-                                    GidiLogger::logMsg("Octave up message sent");
-                                    ++octaveChange;
-                                    sendChangeMessage();
-                                    break;
-                                case ButtonSpecialFunctions::OctaveDown:
-                                    GidiLogger::logMsg("Octave down message sent");
-                                    --octaveChange;
-                                    sendChangeMessage();
-                                    break;
-                                case ButtonSpecialFunctions::PitchDown:
-                                    GidiLogger::logMsg("Pitch down message sent");
-                                    --pitchChange;
-                                    sendChangeMessage();
-                                    break;
-                                case ButtonSpecialFunctions::PitchUp:
-                                    GidiLogger::logMsg("Pitch up message sent");
-                                    ++pitchChange;
-                                    sendChangeMessage();
-                                    break;
-                                default:
-                                    note += octaveChange * 12;
-                                    note += pitchChange;
-                                    GidiLogger::logMsg("Note on: " + String(note) + " @ velocity: " + String(defaultVelocity));
-                                    msgQueue->add(MidiMessage::noteOn(1, note,(uint8)defaultVelocity));
-                                    break;
-                            }
-                        }
-                    }
-                    else {
-                        if (buttonMap->contains(key)) {
-                            int note = buttonMap->operator[](i.getKey());
-                            switch(note) {
-                                case ButtonSpecialFunctions::OctaveUp:
-                                case ButtonSpecialFunctions::OctaveDown:
-                                case ButtonSpecialFunctions::PitchDown:
-                                case ButtonSpecialFunctions::PitchUp:
-                                    break;
-                                default:
-                                    note += octaveChange * 12;
-                                    note += pitchChange;
-                                    GidiLogger::logMsg("Note off: " + String(note));
-                                    msgQueue->add(MidiMessage::noteOff(1, note));
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-            prevButtonState.set(i.getKey(), i.getValue());
-        }
-
+        recordControllerState();
+        // Remember HERE to call pressure sensitive changes before button changes !!!
+        handleAxisMessages();
+        handleButtonChanges();
     } 
     else {
         // game controller is not plugged in
@@ -226,3 +168,108 @@ void GidiProcessor::pulse() {
 Array<MidiMessage>* GidiProcessor::getMessageQueue() {
     return msgQueue;
 } 
+
+void GidiProcessor::recordControllerState() {
+    SDL_GameController* controller = controllerHandles[activeControllerIndex];
+    currButtonState.set("A", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_A));
+    currButtonState.set("B", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_B));
+    currButtonState.set("X", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_X));
+    currButtonState.set("Y", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_Y));
+    currButtonState.set("DpadUp", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP));
+    currButtonState.set("DpadDown", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN));
+    currButtonState.set("DpadLeft", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT));
+    currButtonState.set("DpadRight", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT));
+    currButtonState.set("LBmpr", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSHOULDER));
+    currButtonState.set("RBmpr", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER));
+    currButtonState.set("LStick", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSTICK));
+    currButtonState.set("RStick", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSTICK));
+    currButtonState.set("Start", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_START));
+    currButtonState.set("Back", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_BACK));
+    currButtonState.set("Guide", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_GUIDE));
+
+    currAxisState.set("LeftTrigger", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT));
+    currAxisState.set("RightTrigger", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT));
+    currAxisState.set("LeftStickX", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX));
+    currAxisState.set("RightStickX", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX));
+    currAxisState.set("LeftStickY", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY));
+    currAxisState.set("RightStickY", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY));
+}
+
+void GidiProcessor::handleButtonChanges() { // this is where we send MIDI messages based on button changes
+    for (HashMap<String, bool>::Iterator i (currButtonState); i.next();) { // Loop through all buttons and check if state has changed
+        String key = i.getKey();
+        if (i.getValue() != prevButtonState[key]) {
+            if (i.getValue()) { // if button just got turned on
+                if (componentMap->contains(key)) {
+                    int note = componentMap->operator[](key);
+                    switch(note) {
+                        case ComponentSpecialFunctions::OctaveUp:
+                            ++octaveChange;
+                            sendChangeMessage();
+                            break;
+                        case ComponentSpecialFunctions::OctaveDown:
+                            --octaveChange;
+                            sendChangeMessage();
+                            break;
+                        case ComponentSpecialFunctions::PitchDown:
+                            --pitchChange;
+                            sendChangeMessage();
+                            break;
+                        case ComponentSpecialFunctions::PitchUp:
+                            ++pitchChange;
+                            sendChangeMessage();
+                            break;
+                        default:
+                            note += octaveChange * 12;
+                            note += pitchChange;
+                            msgQueue->add(MidiMessage::noteOn(1, note,(uint8)defaultVelocity));
+                            break;
+                    }
+                }
+            }
+            else { // button just got turned off
+                if (componentMap->contains(key)) {
+                    int note = componentMap->operator[](i.getKey());
+                    switch(note) {
+                        case ComponentSpecialFunctions::OctaveUp:
+                        case ComponentSpecialFunctions::OctaveDown:
+                        case ComponentSpecialFunctions::PitchDown:
+                        case ComponentSpecialFunctions::PitchUp:
+                            break;
+                        default:
+                            note += octaveChange * 12;
+                            note += pitchChange;
+                            msgQueue->add(MidiMessage::noteOff(1, note));
+                            break;
+                    }
+                }
+            }
+        }
+        prevButtonState.set(i.getKey(), i.getValue()); // SET PREVIOUS STATE AS THE CURRENT STATE FOR NEXT PULSE!
+    }
+}
+
+void GidiProcessor::handleAxisMessages() {
+    for (HashMap<String, int>::Iterator i (currAxisState); i.next();) { // Loop through all axes and send messages a ccordingly 
+        String key = i.getKey();
+        if (componentMap->contains(key)) {
+            int func = componentMap->operator[](key);
+            switch (func) {
+                case ComponentSpecialFunctions::PitchBend:
+                    // DO PITCH BEND STUFF HERE
+                    if (i.getValue() <= 0) {
+                        msgQueue->add(MidiMessage::pitchWheel(1, 0));
+                    }
+                    else {
+                        float pct_down = i.getValue() / 32767.0;
+                        int position = (16383 * pct_down);
+                        msgQueue->add(MidiMessage::pitchWheel(1, position));
+                    }
+                    break;
+                case ComponentSpecialFunctions::Velocity:
+                    // DO Velocity stuff here
+                    break;
+            }
+        }
+    }
+}

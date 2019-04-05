@@ -15,6 +15,15 @@
         "DpadUp": "B4",
         "DpadLeft": "C5",
         "DpadRight": "PitchUp",
-        "DpadDown": "PitchDown"
+        "DpadDown": "PitchDown",
+
+        "RTrigger": "PitchBend",
+        /*
+        "LTrigger": "PitchBend",
+        "LStickY": "PitchBend",
+        "LStickX": "Velocity",
+        "RStickY": "PitchBend",
+        "RStickX": "Velocity"
+        */
     }
 }

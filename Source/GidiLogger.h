@@ -2,6 +2,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/* DEPRECATED ATM - MAY REMOVE IN FUTURE */
+/* CURRENTLY NOT USING THIS ANYWHERE */
+
 class GidiLogger : public ChangeListener {
     public:
         static StringArray logQueue;

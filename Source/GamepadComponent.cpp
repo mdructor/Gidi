@@ -34,6 +34,11 @@ GamepadComponent::GamepadComponent() {
     ctrlrBtns->set("RTrigger",
                     new ControllerButton(
                             ControllerButton::ButtonType::Trigger));
+    ctrlrBtns->set("Start", 
+                    new ControllerButton(ControllerButton::ButtonType::Bumper));
+
+    ctrlrBtns->set("Back", 
+                    new ControllerButton(ControllerButton::ButtonType::Bumper));
     
     for (ControllerButton* btn : *ctrlrBtns) {
         addAndMakeVisible(btn);
@@ -55,9 +60,9 @@ void GamepadComponent::resized() {
     ctrlrBtns->operator[]("X")->setBounds(210, 90, 30, 30); // right four
     ctrlrBtns->operator[]("B")->setBounds(260, 90, 30, 30); // right four
     ctrlrBtns->operator[]("A")->setBounds(235, 115, 30, 30); // right four
-    ctrlrBtns->operator[]("Guide")->setBounds(130, 70, 25, 25); // guide button
-    ctrlrBtns->operator[]("LStick")->setBounds(85, 125, 45, 45); // left stick
-    ctrlrBtns->operator[]("RStick")->setBounds(165, 125, 45, 45); // right stick
+    ctrlrBtns->operator[]("Guide")->setBounds(145, 70, 25, 25); // guide button
+    ctrlrBtns->operator[]("LStick")->setBounds(95, 125, 45, 45); // left stick
+    ctrlrBtns->operator[]("RStick")->setBounds(175, 125, 45, 45); // right stick
     ctrlrBtns->operator[]("DpadUp")->setBounds(55, 65, 20, 35); // up dpad
     ctrlrBtns->operator[]("DpadDown")->setBounds(55, 110, 20, 35); // down dpad
     ctrlrBtns->operator[]("DpadLeft")->setBounds(25, 95, 35, 20); //left dpad
@@ -66,4 +71,6 @@ void GamepadComponent::resized() {
     ctrlrBtns->operator[]("RBmpr")->setBounds(210, 35, 50, 20); // rightbumper 
     ctrlrBtns->operator[]("LTrigger")->setBounds(60, 0, 50, 40); //left trigger 
     ctrlrBtns->operator[]("RTrigger")->setBounds(210, 0, 50, 40);
+    ctrlrBtns->operator[]("Start")->setBounds(175, 50, 30, 15);
+    ctrlrBtns->operator[]("Back")->setBounds(115, 50, 30, 15);
 }

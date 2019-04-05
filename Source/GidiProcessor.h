@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "GidiLogger.h"
 #include <SDL2/SDL.h>
 
 class GidiProcessor : public ChangeBroadcaster {
@@ -15,9 +14,15 @@ class GidiProcessor : public ChangeBroadcaster {
 
         HashMap<String, bool> prevButtonState;
         HashMap<String, bool> currButtonState;
-        HashMap<String, int>* buttonMap;
+        HashMap<String, int> prevAxisState;
+        HashMap<String, int> currAxisState;
+        HashMap<String, int>* componentMap;
 
         Array<MidiMessage>* msgQueue;
+
+        void handleButtonChanges();
+        void recordControllerState();
+        void handleAxisMessages();
 
         int defaultVelocity = 100;
         int octaveChange = 0;
@@ -25,7 +30,7 @@ class GidiProcessor : public ChangeBroadcaster {
 
     public:
 
-        enum ButtonSpecialFunctions {PitchUp=1, PitchDown=2, OctaveUp=3, OctaveDown=4};
+        enum ComponentSpecialFunctions {PitchUp=1, PitchDown=2, OctaveUp=3, OctaveDown=4, Velocity=5, PitchBend=6};
 
         static int parseNote(String note);
         static Array<String> getCtrlrNames();
@@ -43,7 +48,7 @@ class GidiProcessor : public ChangeBroadcaster {
         int getPitchChange() {return pitchChange;}
         void setPitchChange(int val) {pitchChange = val;}
 
-        HashMap<String, int>* getButtonMap() {return buttonMap;}
+        HashMap<String, int>* getcomponentMap() {return componentMap;}
 
         void pulse();
         Array<MidiMessage>* getMessageQueue();

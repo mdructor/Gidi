@@ -1,22 +1,13 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-  ==============================================================================
-*/
-
 #include "MainComponent.h"
 
-//==============================================================================
 MainComponent::MainComponent()
 {   
     // Button setup
-    btnRefresh.setImages(false, true, false, refreshImage, 1, Colours::blue, refreshImage, .5, Colours::blueviolet, refreshImage, .25, Colours::burlywood);
+    btnRefresh.setImages(false, true, false, refreshImage, 1, Colours::white, refreshImage, .5, Colours::lightgrey, refreshImage, .25, Colours::whitesmoke);
     btnRefresh.onClick = [this] { refreshComboBoxes(); };
-    btnToggle.setImages(false, true, false, playIcon, 1, Colours::grey, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
+    btnToggle.setImages(false, true, false, playIcon, 1, Colours::white, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
     btnToggle.onClick = [this] { toggle(); };
-    btnSettings.setImages(false, true, false, settingsIcon, 1, Colours::grey, settingsIcon, .5, Colours::lightgrey, settingsIcon, .25, Colours::whitesmoke);
+    btnSettings.setImages(false, true, false, settingsIcon, 1, Colours::white, settingsIcon, .5, Colours::lightgrey, settingsIcon, .25, Colours::whitesmoke);
     btnSettings.onClick = [this] { openOptionsDialog(); };
 
     // Combo box listeners
@@ -163,19 +154,13 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 {
     // This function will be called when the audio device is started, or when
     // its settings (i.e. sample rate, block size, etc) are changed.
-
     // You can use this function to initialise any resources you might need,
     // but be careful - it will be called on the audio thread, not the GUI thread.
-
     // For more details, see the help for AudioProcessor::prepareToPlay()
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-    // Your audio-processing code goes here!
-
-    // For more details, see the help for AudioProcessor::getNextAudioBlock()
-
     // Right now we are not producing any data, in which case we need to clear the buffer
     // (to prevent the output of random noise)
     bufferToFill.clearActiveBufferRegion();
@@ -203,7 +188,6 @@ void MainComponent::releaseResources()
 {
     // This will be called when the audio device stops, or when it is being
     // restarted due to a setting change.
-
     // For more details, see the help for AudioProcessor::releaseResources()
 }
 
@@ -212,8 +196,6 @@ void MainComponent::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
-    // You can add your drawing code here!
 }
 
 
@@ -279,7 +261,7 @@ void MainComponent::toggle() {
     }
 
     if (!isProcessing) { // must be off
-        btnToggle.setImages(false, true, false, pauseIcon, 1, Colours::grey, pauseIcon, .5, Colours::lightgrey, pauseIcon, .25, Colours::whitesmoke);
+        btnToggle.setImages(false, true, false, pauseIcon, 1, Colours::white, pauseIcon, .5, Colours::lightgrey, pauseIcon, .25, Colours::whitesmoke);
         btnRefresh.setEnabled(false);
         cbMappings.setEnabled(false);
         cbControllers.setEnabled(false);
@@ -308,7 +290,7 @@ void MainComponent::toggle() {
     }
     else {
         btnToggle.setButtonText("Start");
-        btnToggle.setImages(false, true, false, playIcon, 1, Colours::grey, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
+        btnToggle.setImages(false, true, false, playIcon, 1, Colours::white, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
         btnRefresh.setEnabled(true);
         cbMappings.setEnabled(true);
         cbControllers.setEnabled(true);
@@ -376,26 +358,32 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster* source) {
 }
 
 void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
-    const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide"); 
+    const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide", "LTrigger", "RTrigger"); 
     if (source->isMouseOver()) {
         if (gamepadComponent->ctrlrBtns->containsValue(source)) {
             for (auto tag : searchTags) {
                 if (gamepadComponent->ctrlrBtns->contains(tag)) {
                     if (gamepadComponent->ctrlrBtns->operator[](tag) == source) {
-                        int compVal = processor->getButtonMap()->operator[](tag);
+                        int compVal = processor->getcomponentMap()->operator[](tag);
                         String builder = tag + " Button:\n";
                         switch (compVal) {
-                            case GidiProcessor::ButtonSpecialFunctions::OctaveDown:
+                            case GidiProcessor::ComponentSpecialFunctions::OctaveDown:
                                 builder += "Octave Down\n";
                                 break;
-                            case GidiProcessor::ButtonSpecialFunctions::OctaveUp:
+                            case GidiProcessor::ComponentSpecialFunctions::OctaveUp:
                                 builder += "Octave Up\n";
                                 break;
-                            case GidiProcessor::ButtonSpecialFunctions::PitchDown:
+                            case GidiProcessor::ComponentSpecialFunctions::PitchDown:
                                 builder += "Pitch Down\n";
                                 break;
-                            case GidiProcessor::ButtonSpecialFunctions::PitchUp:
+                            case GidiProcessor::ComponentSpecialFunctions::PitchUp:
                                 builder += "Pitch Up\n";
+                                break;
+                            case GidiProcessor::ComponentSpecialFunctions::Velocity:
+                                builder += "Velocity\n";
+                                break;
+                            case GidiProcessor::ComponentSpecialFunctions::PitchBend:
+                                builder += "Pitch Bend\n";
                                 break;
                             default:
                                 builder += "Note On: " + String(compVal) + "\n";
