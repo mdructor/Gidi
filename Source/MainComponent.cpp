@@ -364,7 +364,7 @@ void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
             for (auto tag : searchTags) {
                 if (gamepadComponent->ctrlrBtns->contains(tag)) {
                     if (gamepadComponent->ctrlrBtns->operator[](tag) == source) {
-                        String builder = tag + " Button:\n";
+                        String builder = tag + ":\n";
                         for (auto compVal : processor->getcomponentMap()->operator[](tag)) {
                             switch (compVal) {
                                 case GidiProcessor::ComponentSpecialFunctions::OctaveDown:
