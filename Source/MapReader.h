@@ -11,7 +11,6 @@ using json = nlohmann::json;
 class MapReader {
 
     private:
-        const String PATH2 = "/home/mason/dev/mdGidi/Resources/mappings";
         Array<json> loadedMaps;
     
 
@@ -53,13 +52,20 @@ class MapReader {
         }
 
 
-        HashMap<String, int>* getComponentMap(int index) {
-            HashMap<String, int> *componentMap = new HashMap<String, int>();
+        HashMap<String, Array<int>>* getComponentMap(int index) {
+            HashMap<String, Array<int>>* componentMap = new HashMap<String, Array<int>>();
             json rawMap = loadedMaps[index];
 
             for (auto tag : searchTags) {
                 if (rawMap["map"][tag.toStdString()].is_string()) {
-                    componentMap->set(tag, GidiProcessor::parseNote(rawMap["map"][tag.toStdString()].get<std::string>()));
+                    int parsedNote =  GidiProcessor::parseNote(rawMap["map"][tag.toStdString()].get<std::string>());
+                    componentMap->set(tag, Array<int>(parsedNote));
+                }
+                else if (rawMap["map"][tag.toStdString()].is_array()) {
+                    componentMap->set(tag, Array<int>());
+                    for (auto item : rawMap["map"][tag.toStdString()].get<std::vector<std::string>>()) {
+                        componentMap->getReference(tag).add(GidiProcessor::parseNote(item));
+                    }
                 }
             }
             return componentMap;

@@ -364,29 +364,30 @@ void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
             for (auto tag : searchTags) {
                 if (gamepadComponent->ctrlrBtns->contains(tag)) {
                     if (gamepadComponent->ctrlrBtns->operator[](tag) == source) {
-                        int compVal = processor->getcomponentMap()->operator[](tag);
                         String builder = tag + " Button:\n";
-                        switch (compVal) {
-                            case GidiProcessor::ComponentSpecialFunctions::OctaveDown:
-                                builder += "Octave Down\n";
-                                break;
-                            case GidiProcessor::ComponentSpecialFunctions::OctaveUp:
-                                builder += "Octave Up\n";
-                                break;
-                            case GidiProcessor::ComponentSpecialFunctions::PitchDown:
-                                builder += "Pitch Down\n";
-                                break;
-                            case GidiProcessor::ComponentSpecialFunctions::PitchUp:
-                                builder += "Pitch Up\n";
-                                break;
-                            case GidiProcessor::ComponentSpecialFunctions::Velocity:
-                                builder += "Velocity\n";
-                                break;
-                            case GidiProcessor::ComponentSpecialFunctions::PitchBend:
-                                builder += "Pitch Bend\n";
-                                break;
-                            default:
-                                builder += "Note On: " + String(compVal) + "\n";
+                        for (auto compVal : processor->getcomponentMap()->operator[](tag)) {
+                            switch (compVal) {
+                                case GidiProcessor::ComponentSpecialFunctions::OctaveDown:
+                                    builder += "Octave Down\n";
+                                    break;
+                                case GidiProcessor::ComponentSpecialFunctions::OctaveUp:
+                                    builder += "Octave Up\n";
+                                    break;
+                                case GidiProcessor::ComponentSpecialFunctions::PitchDown:
+                                    builder += "Pitch Down\n";
+                                    break;
+                                case GidiProcessor::ComponentSpecialFunctions::PitchUp:
+                                    builder += "Pitch Up\n";
+                                    break;
+                                case GidiProcessor::ComponentSpecialFunctions::Velocity:
+                                    builder += "Velocity\n";
+                                    break;
+                                case GidiProcessor::ComponentSpecialFunctions::PitchBend:
+                                    builder += "Pitch Bend\n";
+                                    break;
+                                default:
+                                    builder += "Note On: " + String(compVal) + "\n";
+                            }
                         }
                         txtMapInfo.setText(builder);
                     }

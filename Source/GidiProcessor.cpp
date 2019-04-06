@@ -106,7 +106,7 @@ int GidiProcessor::parseNote(String note) {
 GidiProcessor::GidiProcessor() {
 }
 
-GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* compMap, int defVel) {
+GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* compMap, int defVel) {
 
     defaultVelocity = defVel;
 
@@ -201,46 +201,48 @@ void GidiProcessor::handleButtonChanges() { // this is where we send MIDI messag
         if (i.getValue() != prevButtonState[key]) {
             if (i.getValue()) { // if button just got turned on
                 if (componentMap->contains(key)) {
-                    int note = componentMap->operator[](key);
-                    switch(note) {
-                        case ComponentSpecialFunctions::OctaveUp:
-                            ++octaveChange;
-                            sendChangeMessage();
-                            break;
-                        case ComponentSpecialFunctions::OctaveDown:
-                            --octaveChange;
-                            sendChangeMessage();
-                            break;
-                        case ComponentSpecialFunctions::PitchDown:
-                            --pitchChange;
-                            sendChangeMessage();
-                            break;
-                        case ComponentSpecialFunctions::PitchUp:
-                            ++pitchChange;
-                            sendChangeMessage();
-                            break;
-                        default:
-                            note += octaveChange * 12;
-                            note += pitchChange;
-                            msgQueue->add(MidiMessage::noteOn(1, note,(uint8)defaultVelocity));
-                            break;
+                    for (int note : componentMap->operator[](key)) {
+                        switch(note) {
+                            case ComponentSpecialFunctions::OctaveUp:
+                                setOctaveChange(getOctaveChange() + 1);
+                                sendChangeMessage();
+                                break;
+                            case ComponentSpecialFunctions::OctaveDown:
+                                setOctaveChange(getOctaveChange() - 1);
+                                sendChangeMessage();
+                                break;
+                            case ComponentSpecialFunctions::PitchDown:
+                                setPitchChange(getPitchChange() - 1);
+                                sendChangeMessage();
+                                break;
+                            case ComponentSpecialFunctions::PitchUp:
+                                setPitchChange(getPitchChange() + 1);
+                                sendChangeMessage();
+                                break;
+                            default:
+                                note += octaveChange * 12;
+                                note += pitchChange;
+                                msgQueue->add(MidiMessage::noteOn(1, note,(uint8)defaultVelocity));
+                                break;
+                        }
                     }
                 }
             }
             else { // button just got turned off
                 if (componentMap->contains(key)) {
-                    int note = componentMap->operator[](i.getKey());
-                    switch(note) {
-                        case ComponentSpecialFunctions::OctaveUp:
-                        case ComponentSpecialFunctions::OctaveDown:
-                        case ComponentSpecialFunctions::PitchDown:
-                        case ComponentSpecialFunctions::PitchUp:
-                            break;
-                        default:
-                            note += octaveChange * 12;
-                            note += pitchChange;
-                            msgQueue->add(MidiMessage::noteOff(1, note));
-                            break;
+                    for (int note : componentMap->operator[](key)) {
+                        switch(note) {
+                            case ComponentSpecialFunctions::OctaveUp:
+                            case ComponentSpecialFunctions::OctaveDown:
+                            case ComponentSpecialFunctions::PitchDown:
+                            case ComponentSpecialFunctions::PitchUp:
+                                break;
+                            default:
+                                note += octaveChange * 12;
+                                note += pitchChange;
+                                msgQueue->add(MidiMessage::noteOff(1, note));
+                                break;
+                        }
                     }
                 }
             }
@@ -254,22 +256,21 @@ void GidiProcessor::handleAxisMessages() {
         String key = i.getKey();
 
         if (componentMap->contains(key)) { 
-            int func = componentMap->operator[](key);
-            switch (func) {
-                case ComponentSpecialFunctions::PitchBend:
-                    // DO PITCH BEND STUFF HERE
-                    if (i.getValue() <= 0) {
-                        msgQueue->add(MidiMessage::pitchWheel(1, 0));
-                    }
-                    else {
-                        float pct_down = i.getValue() / 32767.0;
-                        int position = (16383 * pct_down);
+            for (auto func : componentMap->operator[](key)) {
+                float pct_down = i.getValue() / 32767.0;
+                if (pct_down < 0) {
+                    pct_down *= -1;
+                }
+                int position = (16383 * pct_down);
+                switch (func) {
+                    case ComponentSpecialFunctions::PitchBend:
+                        // DO PITCH BEND STUFF HERE
                         msgQueue->add(MidiMessage::pitchWheel(1, position));
-                    }
-                    break;
-                case ComponentSpecialFunctions::Velocity:
-                    // DO Velocity stuff here
-                    break;
+                        break;
+                    case ComponentSpecialFunctions::Velocity:
+                        // DO Velocity stuff here
+                        break;
+                }
             }
         }
     }

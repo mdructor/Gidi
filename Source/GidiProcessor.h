@@ -16,7 +16,7 @@ class GidiProcessor : public ChangeBroadcaster {
         HashMap<String, bool> currButtonState;
         HashMap<String, int> prevAxisState;
         HashMap<String, int> currAxisState;
-        HashMap<String, int>* componentMap;
+        HashMap<String, Array<int>>* componentMap;
 
         Array<MidiMessage>* msgQueue;
 
@@ -37,18 +37,19 @@ class GidiProcessor : public ChangeBroadcaster {
         static void updateCtrlrHandles();
 
         GidiProcessor();
-        GidiProcessor(int controllerIndex, HashMap<String, int>* mapping, int defaultVelocity = 100);
+        GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* mapping, int defaultVelocity = 100);
         ~GidiProcessor();
 
         int getCurrentVelocity() {return defaultVelocity;}
         void setDefaultVelocity(int velocity) {defaultVelocity = velocity;}
 
         int getOctaveChange() {return octaveChange;}
-        void setOctaveChange(int val) {octaveChange = val;}
+        void setOctaveChange(int val) {octaveChange = val;
+                                       msgQueue->add(MidiMessage::allNotesOff(1));}
         int getPitchChange() {return pitchChange;}
-        void setPitchChange(int val) {pitchChange = val;}
+        void setPitchChange(int val) {pitchChange = val;msgQueue->add(MidiMessage::allNotesOff(1));}
 
-        HashMap<String, int>* getcomponentMap() {return componentMap;}
+        HashMap<String, Array<int>>* getcomponentMap() {return componentMap;}
 
         void pulse();
         Array<MidiMessage>* getMessageQueue();
