@@ -130,12 +130,12 @@ GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, int>* compMap,
     prevButtonState.set("Back", false);
     prevButtonState.set("Guide", false);
 
-    prevAxisState.set("LeftTrigger", 0);
-    prevAxisState.set("RightTrigger", 0);
-    prevAxisState.set("LeftStickX", 0);
-    prevAxisState.set("LeftStickY", 0);
-    prevAxisState.set("RightStickY", 0);
-    prevAxisState.set("RightStickX", 0);
+    prevAxisState.set("LTrigger", 0);
+    prevAxisState.set("RTrigger", 0);
+    prevAxisState.set("LStickX", 0);
+    prevAxisState.set("LStickY", 0);
+    prevAxisState.set("RStickY", 0);
+    prevAxisState.set("RStickX", 0);
 }
 
 GidiProcessor::~GidiProcessor() {
@@ -156,7 +156,7 @@ void GidiProcessor::pulse() {
     SDL_GameController* controller = controllerHandles[activeControllerIndex];
     if (controller != 0 && SDL_GameControllerGetAttached(controller)) {
         recordControllerState();
-        // Remember HERE to call pressure sensitive changes before button changes !!!
+        // Remember HERE to call pressure sensitive changes before button changes !!! (so velocity controls will take prio)
         handleAxisMessages();
         handleButtonChanges();
     } 
@@ -187,12 +187,12 @@ void GidiProcessor::recordControllerState() {
     currButtonState.set("Back", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_BACK));
     currButtonState.set("Guide", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_GUIDE));
 
-    currAxisState.set("LeftTrigger", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT));
-    currAxisState.set("RightTrigger", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT));
-    currAxisState.set("LeftStickX", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX));
-    currAxisState.set("RightStickX", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX));
-    currAxisState.set("LeftStickY", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY));
-    currAxisState.set("RightStickY", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY));
+    currAxisState.set("LTrigger", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT));
+    currAxisState.set("RTrigger", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT));
+    currAxisState.set("LStickX", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX));
+    currAxisState.set("RStickX", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX));
+    currAxisState.set("LStickY", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY));
+    currAxisState.set("RStickY", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY));
 }
 
 void GidiProcessor::handleButtonChanges() { // this is where we send MIDI messages based on button changes
@@ -252,7 +252,8 @@ void GidiProcessor::handleButtonChanges() { // this is where we send MIDI messag
 void GidiProcessor::handleAxisMessages() {
     for (HashMap<String, int>::Iterator i (currAxisState); i.next();) { // Loop through all axes and send messages a ccordingly 
         String key = i.getKey();
-        if (componentMap->contains(key)) {
+
+        if (componentMap->contains(key)) { 
             int func = componentMap->operator[](key);
             switch (func) {
                 case ComponentSpecialFunctions::PitchBend:

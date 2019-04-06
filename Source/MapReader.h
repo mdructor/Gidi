@@ -17,7 +17,8 @@ class MapReader {
 
     public:
         const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", 
-                                                    "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide");
+                                                    "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide", "RTrigger",
+                                                    "LTrigger");
 
         MapReader() {
             refresh();
