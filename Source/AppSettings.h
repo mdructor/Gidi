@@ -8,6 +8,7 @@ class AppSettings {
 
     private:
         static String mapDirectory;
+        static String iconsDirectory;
 
     public:
         static bool loadAppSettings();
@@ -15,6 +16,7 @@ class AppSettings {
 
         static void setMapDirectory(String path);
         static String getMapDirectory();
+        static String getIconsDirectory();
 };
 
 

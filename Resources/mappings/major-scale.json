@@ -17,13 +17,7 @@
         "DpadRight": "PitchUp",
         "DpadDown": "PitchDown",
 
-        "RTrigger": "PitchBend",
-        /*
-        "LTrigger": "PitchBend",
-        "LStickY": "PitchBend",
-        "LStickX": "Velocity",
-        "RStickY": "PitchBend",
-        "RStickX": "Velocity"
-        */
+        "RTrigger": "PitchBend"
+
     }
 }

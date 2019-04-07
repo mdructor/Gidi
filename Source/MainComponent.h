@@ -14,6 +14,7 @@
 #include "GidiProcessor.h"
 #include "GamepadComponent.h"
 #include "NewMidiDialog.h"
+#include "AppSettings.h"
 #include "OptionsComponent.h"
 
 //==============================================================================
@@ -60,10 +61,10 @@ private:
     Slider sldrOctave;
     Slider sldrPitch;
 
-    Image refreshImage = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/refresh-button.png"));
-    Image settingsIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/settings.png"));
-    Image playIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/play-button.png"));
-    Image pauseIcon = PNGImageFormat::loadFrom(File("/home/mason/dev/mdGidi/Resources/icons/pause-button.png"));
+    Image refreshImage = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("refresh-button.png"));
+    Image settingsIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("settings.png"));
+    Image playIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("play-button.png"));
+    Image pauseIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("pause-button.png"));
 
     GidiProcessor* processor = nullptr;
     MidiOutput* midiOut = nullptr;

@@ -1,3 +1,4 @@
 {
-    "map-directory" : "mappings/",
+    "icons-directory": "icons/",
+    "map-directory" : "mappings/"
 }

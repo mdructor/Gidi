@@ -1,9 +1,10 @@
 #include "AppSettings.h"
 
 String AppSettings::mapDirectory;
+String AppSettings::iconsDirectory;
 
 bool AppSettings::loadAppSettings() {
-    File settingsFile = File::getSpecialLocation(File::SpecialLocationType::userHomeDirectory).getChildFile("Gidi/settings.json");
+    File settingsFile = File::getCurrentWorkingDirectory().getChildFile("settings.json");
     if (!settingsFile.existsAsFile()) {
         printf("Couldn't find app settings file...\n");
         return false;
@@ -14,6 +15,13 @@ bool AppSettings::loadAppSettings() {
     }
     else {
         mapDirectory = "";
+    }
+
+    if (parsedSettings["icons-directory"].is_string()) {
+        iconsDirectory = parsedSettings["icons-directory"].get<std::string>();
+    }
+    else {
+        iconsDirectory = "";
     }
 
     return true;
@@ -29,4 +37,8 @@ void AppSettings::setMapDirectory(String path) {
 
 String AppSettings::getMapDirectory() {
     return mapDirectory;
+}
+
+String AppSettings::getIconsDirectory() {
+    return iconsDirectory;
 }
