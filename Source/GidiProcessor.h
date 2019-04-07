@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
 class GidiProcessor : public ChangeBroadcaster {
