@@ -4,7 +4,7 @@
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
-class GidiProcessor : public ChangeBroadcaster {
+class GidiProcessor : public Thread, public ChangeBroadcaster {
 
     private:
         const static int MAX_CONTROLLERS = 4;
@@ -20,6 +20,7 @@ class GidiProcessor : public ChangeBroadcaster {
         HashMap<String, Array<int>>* componentMap;
 
         Array<MidiMessage>* msgQueue;
+        MidiOutput* midiOut;
 
         void handleButtonChanges();
         void recordControllerState();
@@ -28,6 +29,9 @@ class GidiProcessor : public ChangeBroadcaster {
         int defaultVelocity = 100;
         int octaveChange = 0;
         int pitchChange = 0;
+
+        MidiKeyboardState* midiState = nullptr;
+
 
     public:
 
@@ -38,7 +42,7 @@ class GidiProcessor : public ChangeBroadcaster {
         static void updateCtrlrHandles();
 
         GidiProcessor();
-        GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* mapping, int defaultVelocity = 100);
+        GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* mapping, MidiOutput* midiOut);
         ~GidiProcessor();
 
         int getCurrentVelocity() {return defaultVelocity;}
@@ -50,9 +54,13 @@ class GidiProcessor : public ChangeBroadcaster {
         int getPitchChange() {return pitchChange;}
         void setPitchChange(int val) {pitchChange = val;msgQueue->add(MidiMessage::allNotesOff(1));}
 
+        MidiKeyboardState* getBoardState() { return midiState; }
+        void setBoardState( MidiKeyboardState* state) { midiState = state;}
+
         HashMap<String, Array<int>>* getcomponentMap() {return componentMap;}
 
         void pulse();
+        virtual void run() override;
         Array<MidiMessage>* getMessageQueue();
 
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GidiProcessor)

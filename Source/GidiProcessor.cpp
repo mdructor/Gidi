@@ -103,16 +103,16 @@ int GidiProcessor::parseNote(String note) {
     return result;
 }
 
-GidiProcessor::GidiProcessor() {
+GidiProcessor::GidiProcessor() : Thread("ControllerProcessing") {
 }
 
-GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* compMap, int defVel) {
-
-    defaultVelocity = defVel;
+GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* compMap, MidiOutput* midi) : Thread("ControllerProcessing") {
 
     activeControllerIndex = controllerIndex;
     componentMap = compMap;
     msgQueue = new Array<MidiMessage>();
+    midiOut = midi;
+    midiState = new MidiKeyboardState();
     
     prevButtonState.set("A", false);
     prevButtonState.set("B", false);
@@ -139,6 +139,7 @@ GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* c
 }
 
 GidiProcessor::~GidiProcessor() {
+    stopThread(2000);
     
     if (msgQueue != nullptr) {
         delete msgQueue;
@@ -148,6 +149,20 @@ GidiProcessor::~GidiProcessor() {
     }
     componentMap = nullptr; 
     msgQueue = nullptr;
+}
+
+void GidiProcessor::run() {
+
+    while (!threadShouldExit()) {
+        wait(6);
+        const MessageManagerLock mm1 (Thread::getCurrentThread());
+
+        if (!mm1.lockWasGained()) {
+            return ;
+        }
+
+        pulse();
+    }
 
 }
 
@@ -159,9 +174,21 @@ void GidiProcessor::pulse() {
         // Remember HERE to call pressure sensitive changes before button changes !!! (so velocity controls will take prio)
         handleAxisMessages();
         handleButtonChanges();
+        MidiBuffer buffer; // buffer to add our message queue to
+        for (auto msg : *(getMessageQueue())) {
+            if (midiState != nullptr) {
+                midiState->processNextMidiEvent(msg);
+            }
+            buffer.addEvent(msg, 1);
+        }
+        midiOut->startBackgroundThread();
+        midiOut->sendBlockOfMessagesNow(buffer); // send buffered messages to MIDI out
+        midiOut->stopBackgroundThread();
+        getMessageQueue()->clear();
     } 
     else {
         // game controller is not plugged in
+        stopThread(250);
     } 
 }
 

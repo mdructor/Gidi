@@ -165,23 +165,6 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     // (to prevent the output of random noise)
     bufferToFill.clearActiveBufferRegion();
 
-    if (isProcessing) {
-        processor->pulse();
-        MidiBuffer buffer; // buffer to add our message queue to
-        for (auto msg : *(processor->getMessageQueue())) {
-            keyboardState.processNextMidiEvent(msg);
-            buffer.addEvent(msg, 1);
-        }
-        midiOut->startBackgroundThread();
-        midiOut->sendBlockOfMessagesNow(buffer); // send buffered messages to MIDI out
-        midiOut->stopBackgroundThread();
-        processor->getMessageQueue()->clear();
-    } else {
-        if (processor != nullptr) {
-            delete processor;
-            processor = nullptr;
-        }
-    }
 }
 
 void MainComponent::releaseResources()
@@ -270,9 +253,9 @@ void MainComponent::toggle() {
         sldrPitch.setEnabled(true);
         sldrVelocity.setEnabled(true);
         gamepadComponent->setEnabled(true);
-        GidiProcessor::updateCtrlrHandles();
-        processor = new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbMappings.getSelectedId() - 1));
         midiOut = MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1);
+        GidiProcessor::updateCtrlrHandles();
+        processor = new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbMappings.getSelectedId() - 1), midiOut);
         if (midiOut == nullptr) {
             printf("Couldn't open midi device...\n");
         }
@@ -287,6 +270,9 @@ void MainComponent::toggle() {
         processor->addChangeListener(this);
 
         isProcessing = true;
+        processor->setBoardState(&keyboardState);
+        
+        processor->startThread(10);
     }
     else {
         btnToggle.setButtonText("Start");
@@ -305,6 +291,10 @@ void MainComponent::toggle() {
 
         processor->removeChangeListener(this);
         isProcessing = false;
+        if (processor != nullptr) {
+            delete processor;
+        }
+        processor = nullptr;
     }
 }
 
