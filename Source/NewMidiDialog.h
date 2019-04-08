@@ -2,6 +2,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+// Quick dialog to create a new virtual Midi port - feature only available on Linux/Mac
+
 class NewMidiDialog : public Component {
 
     private:

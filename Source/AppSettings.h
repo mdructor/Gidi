@@ -4,6 +4,13 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+// This class acts like a singleton - will hold our global application
+// data. Should call loadAppSettings at application load. 
+//
+// NOTE: Currently looks for settings.json in the same directory
+//       as the executable. Definitely something to look into in 
+//       the future  TODO TODO TODO
+
 class AppSettings {
 
     private:

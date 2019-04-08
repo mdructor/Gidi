@@ -4,6 +4,18 @@
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
+/*
+    Core of Gidi 
+    This static part of this class holds a handle to all available gamepads connected 
+    on a system. You can retrieve the list of names of these controllers statically.
+    Once you have chosen the controller you want to connect to, a mapping, and a midi out
+    you can create an instance of the processor.
+
+    This is will instantiate everything you need to start processing by using
+    startThread(int prio). Then gidi will run in a seperate thread, processing controller
+    input and sending generated midi messages to the designated midi out. 
+*/
+
 class GidiProcessor : public Thread, public ChangeBroadcaster {
 
     private:

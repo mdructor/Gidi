@@ -1,12 +1,3 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-  ==============================================================================
-*/
-
-/* NEW UI REWRITE: https://wireframe.cc/Q4Cq0n */
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
@@ -17,20 +8,14 @@
 #include "AppSettings.h"
 #include "OptionsComponent.h"
 
-//==============================================================================
-/*
-    This component lives inside our window, and this is where you should put all
-    your controls and content.
-*/
+// Content of the main window -- holds control over the GidiProcessor
+
 class MainComponent   : public Component, public ChangeListener
 {
 public:
-    //==============================================================================
     MainComponent();
     ~MainComponent();
 
-
-    //==============================================================================
     void paint (Graphics& g) override;
     void resized() override;
     virtual void changeListenerCallback(ChangeBroadcaster* source) override;

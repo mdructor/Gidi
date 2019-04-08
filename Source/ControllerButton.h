@@ -2,6 +2,10 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/* 
+    special gui button component that will take on the shape of a 
+    specified gamepad button.
+*/
 
 class ControllerButton : public DrawableButton {
 

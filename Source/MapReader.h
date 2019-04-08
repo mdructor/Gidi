@@ -7,6 +7,11 @@
 
 using json = nlohmann::json;
 
+/*
+    Quick and extremely dirty json map reader
+    ~Works~ but needs a lot of work
+    Whole program will break if an invalid map is read in
+*/
 
 class MapReader {
 

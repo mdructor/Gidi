@@ -3,6 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "AppSettings.h"
 
+// Component to edit the global app settings
 class OptionsComponent : public Component 
 {
     private:

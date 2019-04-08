@@ -3,6 +3,10 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerButton.h"
 
+/* 
+    UI component that holds a collection of buttons
+    that look and relate to a generic gamepad
+*/
 
 class GamepadComponent : public Component
 {
