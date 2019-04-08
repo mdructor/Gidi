@@ -21,9 +21,7 @@
       <FILE id="zxwLC6" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="PEV3J1" name="AppSettings.cpp" compile="1" resource="0" file="Source/AppSettings.cpp"/>
-      <FILE id="UJWiQE" name="GidiLogger.cpp" compile="1" resource="0" file="Source/GidiLogger.cpp"/>
       <FILE id="PDhkFM" name="AppSettings.h" compile="0" resource="0" file="Source/AppSettings.h"/>
-      <FILE id="V0gSsh" name="GidiLogger.h" compile="0" resource="0" file="Source/GidiLogger.h"/>
       <FILE id="PNiCWn" name="NewMidiDialog.h" compile="1" resource="0" file="Source/NewMidiDialog.h"/>
       <FILE id="gnmYyv" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
