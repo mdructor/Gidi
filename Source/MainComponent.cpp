@@ -81,18 +81,6 @@ MainComponent::MainComponent()
     // you add any child components.
     setSize (585, 415);
 
-    // Some platforms require permissions to open input channels so request that here
-    if (RuntimePermissions::isRequired (RuntimePermissions::recordAudio)
-        && ! RuntimePermissions::isGranted (RuntimePermissions::recordAudio))
-    {
-        RuntimePermissions::request (RuntimePermissions::recordAudio,
-                                     [&] (bool granted) { if (granted)  setAudioChannels (2, 2); });
-    }
-    else
-    {
-        // Specify the number of input and output channels that we want to open
-        setAudioChannels (2, 2);
-    }
     refreshComboBoxes();
 }
 
@@ -113,7 +101,6 @@ MainComponent::~MainComponent()
 
     delete midiVisual;
 
-    shutdownAudio();
 }
 
 void MainComponent::resized()
@@ -147,31 +134,6 @@ void MainComponent::resized()
     sldrVelocity.setBounds(290, 215, 80, 80);
     sldrOctave.setBounds(390, 215, 80, 80);
     sldrPitch.setBounds(490, 215, 80, 80);
-}
-
-//==============================================================================
-void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
-{
-    // This function will be called when the audio device is started, or when
-    // its settings (i.e. sample rate, block size, etc) are changed.
-    // You can use this function to initialise any resources you might need,
-    // but be careful - it will be called on the audio thread, not the GUI thread.
-    // For more details, see the help for AudioProcessor::prepareToPlay()
-}
-
-void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
-{
-    // Right now we are not producing any data, in which case we need to clear the buffer
-    // (to prevent the output of random noise)
-    bufferToFill.clearActiveBufferRegion();
-
-}
-
-void MainComponent::releaseResources()
-{
-    // This will be called when the audio device stops, or when it is being
-    // restarted due to a setting change.
-    // For more details, see the help for AudioProcessor::releaseResources()
 }
 
 //==============================================================================
