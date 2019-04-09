@@ -23,7 +23,3 @@ Once you have these things sorted, you can move on to...
 
 First step on all platforms is open up the project file in the main directory with Projucer. From here you can find the exporter for your preferred platform/IDE and export
 it out to that and build from there.  If you need to make your own exporter, make sure you are linking to the SDL2 library somewhere (i.e. -lSDL2 in linker flags)
-
-### Glaring Issue with Building with Other Platforms atm
-File system stuff is all stupid atm. Hard coded expects the resources directory to be 
-in home folder and renamed to Gidi. Will remove this as soon as this changes
