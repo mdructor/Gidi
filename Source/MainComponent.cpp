@@ -338,7 +338,7 @@ void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
                                     builder += "Pitch Bend\n";
                                     break;
                                 default:
-                                    builder += "Note On: " + String(compVal) + "\n";
+                                    builder += "Note On: " + MidiMessage::getMidiNoteName(compVal, true, true, 4) + "\n";
                             }
                         }
                         txtMapInfo.setText(builder);
