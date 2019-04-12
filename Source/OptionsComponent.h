@@ -10,13 +10,13 @@ class OptionsComponent : public Component
         Label      lblMapDirectory;
         TextEditor txtMapDirectory;
         TextButton btnMapDirectory;
-
         TextButton     btnCancel;
         TextButton     btnSave;
 
         void resized() override;
         void paint(Graphics& g) override;
 
+        // Button action handlers
         void onButtonCancel();
         void onButtonSave();
         void onMapDirectory();

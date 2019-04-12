@@ -40,7 +40,8 @@ class MainComponent   : public Component, public ChangeListener
         std::unique_ptr<MidiKeyboardComponent> midiVisual;
         std::unique_ptr<GamepadComponent> gamepadComponent;
 
-        GidiProcessor* processor = nullptr;
+        std::unique_ptr<GidiProcessor> processor;
+
         MidiOutput* midiOut = nullptr;
         Array<MidiOutput*> virtualOuts; // Need to fix this sometime
         MapReader mapReader;        
