@@ -31,7 +31,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         HashMap<String, int> currAxisState;
         HashMap<String, Array<int>>* componentMap;
 
-        Array<MidiMessage>* msgQueue;
+        Array<MidiMessage> msgQueue;
         MidiOutput* midiOut;
 
         void handleButtonChanges();
@@ -62,9 +62,9 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
         int getOctaveChange() {return octaveChange;}
         void setOctaveChange(int val) {octaveChange = val;
-                                       msgQueue->add(MidiMessage::allNotesOff(1));}
+                                       msgQueue.add(MidiMessage::allNotesOff(1));}
         int getPitchChange() {return pitchChange;}
-        void setPitchChange(int val) {pitchChange = val;msgQueue->add(MidiMessage::allNotesOff(1));}
+        void setPitchChange(int val) {pitchChange = val;msgQueue.add(MidiMessage::allNotesOff(1));}
 
         MidiKeyboardState* getBoardState() { return midiState; }
         void setBoardState( MidiKeyboardState* state) { midiState = state;}
@@ -73,7 +73,6 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
         void pulse();
         virtual void run() override;
-        Array<MidiMessage>* getMessageQueue();
 
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GidiProcessor)
 };

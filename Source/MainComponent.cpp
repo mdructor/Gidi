@@ -280,19 +280,19 @@ void MainComponent::openOptionsDialog() {
 }
 
 void MainComponent::onSldrVelocityChange() {
-    if (processor != nullptr) {
+    if (processor) {
         processor->setDefaultVelocity(sldrVelocity.getValue());
     }
 }
 
 void MainComponent::onSldrOctaveChange() {
-    if (processor != nullptr) {
+    if (processor) {
         processor->setOctaveChange(sldrOctave.getValue());
     }
 }
 
 void MainComponent::onSldrPitchChange() {
-    if (processor != nullptr) {
+    if (processor) {
         processor->setPitchChange(sldrPitch.getValue());
     }
 }

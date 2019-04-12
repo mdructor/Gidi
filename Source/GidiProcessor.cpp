@@ -110,7 +110,6 @@ GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* c
 
     activeControllerIndex = controllerIndex;
     componentMap = compMap;
-    msgQueue = new Array<MidiMessage>();
     midiOut = midi;
     midiState = new MidiKeyboardState();
     
@@ -141,14 +140,10 @@ GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* c
 GidiProcessor::~GidiProcessor() {
     stopThread(2000);
     
-    if (msgQueue != nullptr) {
-        delete msgQueue;
-    }
     if (componentMap != nullptr) {
         delete componentMap;
     }
     componentMap = nullptr; 
-    msgQueue = nullptr;
     midiState = nullptr;
 }
 
@@ -176,7 +171,7 @@ void GidiProcessor::pulse() {
         handleAxisMessages();
         handleButtonChanges();
         MidiBuffer buffer; // buffer to add our message queue to
-        for (auto msg : *(getMessageQueue())) {
+        for (auto msg : msgQueue) {
             if (midiState != nullptr) {
                 midiState->processNextMidiEvent(msg);
             }
@@ -185,7 +180,7 @@ void GidiProcessor::pulse() {
         midiOut->startBackgroundThread();
         midiOut->sendBlockOfMessagesNow(buffer); // send buffered messages to MIDI out
         midiOut->stopBackgroundThread();
-        getMessageQueue()->clear();
+        msgQueue.clear();
     } 
     else {
         // game controller is not plugged in
@@ -193,9 +188,6 @@ void GidiProcessor::pulse() {
     } 
 }
 
-Array<MidiMessage>* GidiProcessor::getMessageQueue() {
-    return msgQueue;
-} 
 
 void GidiProcessor::recordControllerState() {
     SDL_GameController* controller = controllerHandles[activeControllerIndex];
@@ -250,7 +242,7 @@ void GidiProcessor::handleButtonChanges() { // this is where we send MIDI messag
                             default:
                                 note += octaveChange * 12;
                                 note += pitchChange;
-                                msgQueue->add(MidiMessage::noteOn(1, note,(uint8)defaultVelocity));
+                                msgQueue.add(MidiMessage::noteOn(1, note,(uint8)defaultVelocity));
                                 break;
                         }
                     }
@@ -268,7 +260,7 @@ void GidiProcessor::handleButtonChanges() { // this is where we send MIDI messag
                             default:
                                 note += octaveChange * 12;
                                 note += pitchChange;
-                                msgQueue->add(MidiMessage::noteOff(1, note));
+                                msgQueue.add(MidiMessage::noteOff(1, note));
                                 break;
                         }
                     }
@@ -293,7 +285,7 @@ void GidiProcessor::handleAxisMessages() {
                 switch (func) {
                     case ComponentSpecialFunctions::PitchBend:
                         // DO PITCH BEND STUFF HERE
-                        msgQueue->add(MidiMessage::pitchWheel(1, position));
+                        msgQueue.add(MidiMessage::pitchWheel(1, position));
                         break;
                     case ComponentSpecialFunctions::Velocity:
                         // DO Velocity stuff here
