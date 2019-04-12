@@ -149,6 +149,7 @@ GidiProcessor::~GidiProcessor() {
     }
     componentMap = nullptr; 
     msgQueue = nullptr;
+    midiState = nullptr;
 }
 
 void GidiProcessor::run() {

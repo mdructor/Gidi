@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MapReader.h"
 #include "GidiProcessor.h"
@@ -12,59 +14,58 @@
 
 class MainComponent   : public Component, public ChangeListener
 {
-public:
-    MainComponent();
-    ~MainComponent();
+    private:
+        ComboBox    cbControllers; 
+        ComboBox    cbMappings;
+        ComboBox    cbMidiPorts;
+        ImageButton btnRefresh;
+        ImageButton btnSettings;
+        ImageButton btnToggle;
+        Image refreshImage = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("refresh-button.png"));
+        Image settingsIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("settings.png"));
+        Image playIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("play-button.png")); // TODO: MOVE THIS LOAD ELSEWHERE
+        Image pauseIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("pause-button.png"));
+        Label       lblController;
+        Label       lblMapping;
+        Label       lblMidiPort;
+        TextEditor txtMapInfo;
+        MidiKeyboardState      keyboardState;
+        Label  lblVelocity;
+        Label  lblOctave;
+        Label  lblPitch;
+        Slider sldrVelocity;
+        Slider sldrOctave;
+        Slider sldrPitch;
 
-    void paint (Graphics& g) override;
-    void resized() override;
-    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
+        std::unique_ptr<MidiKeyboardComponent> midiVisual;
+        std::unique_ptr<GamepadComponent> gamepadComponent;
 
-private:
+        GidiProcessor* processor = nullptr;
+        MidiOutput* midiOut = nullptr;
+        Array<MidiOutput*> virtualOuts; // Need to fix this sometime
+        MapReader mapReader;        
 
-    ComboBox    cbControllers; 
-    ComboBox    cbMappings;
-    ComboBox    cbMidiPorts;
-    ImageButton btnRefresh;
-    ImageButton btnSettings;
-    ImageButton btnToggle;
-    Label       lblController;
-    Label       lblMapping;
-    Label       lblMidiPort;
-    TextEditor txtMapInfo;
-    MidiKeyboardState      keyboardState;
-    MidiKeyboardComponent* midiVisual = new MidiKeyboardComponent(keyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard);
-    GamepadComponent* gamepadComponent = new GamepadComponent();
-    Label  lblVelocity;
-    Label  lblOctave;
-    Label  lblPitch;
-    Slider sldrVelocity;
-    Slider sldrOctave;
-    Slider sldrPitch;
+        bool isProcessing = false;
 
-    Image refreshImage = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("refresh-button.png"));
-    Image settingsIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("settings.png"));
-    Image playIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("play-button.png"));
-    Image pauseIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("pause-button.png"));
+        void refreshComboBoxes();
+        void toggle();
+        void midiChanged();
 
-    GidiProcessor* processor = nullptr;
-    MidiOutput* midiOut = nullptr;
-    Array<MidiOutput*> virtualOuts;
-    MapReader mapReader;        
+        void openOptionsDialog();
 
-    bool isProcessing = false;
+        void onSldrVelocityChange();
+        void onSldrOctaveChange();
+        void onSldrPitchChange();
 
-    void refreshComboBoxes();
-    void toggle();
-    void midiChanged();
+        void onGamepadButtonStateChange(ControllerButton* src);
+    public:
+        MainComponent();
+        ~MainComponent();
 
-    void openOptionsDialog();
+        void paint (Graphics& g) override;
+        void resized() override;
+        virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
-    void onSldrVelocityChange();
-    void onSldrOctaveChange();
-    void onSldrPitchChange();
 
-    void onGamepadButtonStateChange(ControllerButton* src);
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

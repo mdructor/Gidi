@@ -2,6 +2,11 @@
 
 MainComponent::MainComponent()
 {   
+    midiVisual = std::unique_ptr<MidiKeyboardComponent>(
+        new MidiKeyboardComponent(keyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard));
+
+    gamepadComponent = std::unique_ptr<GamepadComponent>(new GamepadComponent());
+
     // Button setup
     btnRefresh.setImages(false, true, false, refreshImage, 1, Colours::white, refreshImage, .5, Colours::lightgrey, refreshImage, .25, Colours::whitesmoke);
     btnRefresh.onClick = [this] { refreshComboBoxes(); };
@@ -66,7 +71,7 @@ MainComponent::MainComponent()
 
     addAndMakeVisible(txtMapInfo);
 
-    addAndMakeVisible(gamepadComponent);
+    addAndMakeVisible(*gamepadComponent);
 
     addAndMakeVisible(lblVelocity);
     addAndMakeVisible(lblOctave);
@@ -75,7 +80,7 @@ MainComponent::MainComponent()
     addAndMakeVisible(sldrOctave);
     addAndMakeVisible(sldrPitch);
 
-    addAndMakeVisible (midiVisual);
+    addAndMakeVisible (*midiVisual);
 
     // Make sure you set the size of the component after
     // you add any child components.
@@ -86,10 +91,6 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
-    if (gamepadComponent != nullptr) {
-        delete gamepadComponent;
-    }
-    // This shuts down the audio device and clears the audio source.
     if (processor != nullptr) {
         delete processor;
         processor = nullptr;
@@ -98,9 +99,6 @@ MainComponent::~MainComponent()
         delete midiOut;
         midiOut = nullptr;
     }
-
-    delete midiVisual;
-
 }
 
 void MainComponent::resized()
