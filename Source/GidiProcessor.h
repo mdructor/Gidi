@@ -32,7 +32,6 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         HashMap<String, Array<int>>* componentMap;
 
         Array<MidiMessage> msgQueue;
-        MidiOutput* midiOut;
 
         void handleButtonChanges();
         void recordControllerState();
@@ -42,6 +41,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         int octaveChange = 0;
         int pitchChange = 0;
 
+        MidiOutput* midiOut;
         MidiKeyboardState* midiState = nullptr;
 
 

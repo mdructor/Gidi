@@ -91,10 +91,6 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
-    if (midiOut != nullptr) {
-        delete midiOut;
-        midiOut = nullptr;
-    }
 }
 
 void MainComponent::resized()
@@ -210,17 +206,12 @@ void MainComponent::toggle() {
         sldrVelocity.setEnabled(true);
         gamepadComponent->setEnabled(true);
 
-        midiOut = MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1);
-        if (midiOut == nullptr) {
-            printf("Couldn't open midi device...\n");
-        }
-
         MapReader::MapInfo mapInfo = mapReader.getMapInfo(cbMappings.getSelectedId() - 1);
         String info = "Map: " + mapInfo.name + "\n" + "Author: " + mapInfo.author + "\n";
         txtMapInfo.setText(info);
 
         GidiProcessor::updateCtrlrHandles();
-        processor = std::unique_ptr<GidiProcessor>(new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbMappings.getSelectedId() - 1), midiOut));
+        processor = std::unique_ptr<GidiProcessor>(new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbMappings.getSelectedId() - 1), MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1)));
 
         sldrOctave.setValue(processor->getOctaveChange());
         sldrPitch.setValue(processor->getPitchChange());
