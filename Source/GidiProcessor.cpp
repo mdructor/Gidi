@@ -110,7 +110,7 @@ GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* c
 
     activeControllerIndex = controllerIndex;
     componentMap = compMap;
-    midiOut = midi;
+    midiOut = std::unique_ptr<MidiOutput>(midi);
     midiState = new MidiKeyboardState();
     
     prevButtonState.set("A", false);
@@ -144,7 +144,6 @@ GidiProcessor::~GidiProcessor() {
         delete componentMap;
     }
     componentMap = nullptr; 
-    midiState = nullptr;
 }
 
 void GidiProcessor::run() {

@@ -3,6 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
+#include <memory>
 
 /*
     Core of Gidi 
@@ -41,7 +42,8 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         int octaveChange = 0;
         int pitchChange = 0;
 
-        MidiOutput* midiOut;
+        std::unique_ptr<MidiOutput> midiOut;
+
         MidiKeyboardState* midiState = nullptr;
 
 
