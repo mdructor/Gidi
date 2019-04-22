@@ -1,0 +1,42 @@
+{
+    "info": {
+        "name": "Blank",
+        "author": "Mason",
+        "default-velocity": 100
+    },
+
+    "map": {
+	--- Button Press Section----
+        "A": ["C4", "E4", "G4"],
+        "B": [],
+        "X": [],
+        "Y": [],
+        "RBmpr": [],
+        "LBmpr": [],
+        "DpadUp": [],
+	      "DpadDown": [], 
+       	"DpadLeft": [],
+      	"DpadRight": [],
+      	"LStick": [],
+      	"RStick": [],
+       	"Start": [],
+       	"Option": [],
+	      "Guide": [],
+	
+	-- Pressure Sensitive Section--
+        "RTrigger": "PitchBend",
+	      "LTrigger": "Velocity",
+	      "LStickX":  "",
+	      "LStickY":  "",
+        "RStickX":  "",
+        "RStickY":  ""
+    }
+}
+
+Special functions for button presses:
+
+PitchUp, PitchDown, OctaveUp, OctaveDown, Sustain
+
+Special functions for Pressure sensitive controls:
+
+PitchBend, Velocity
