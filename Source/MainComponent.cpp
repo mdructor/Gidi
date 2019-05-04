@@ -211,7 +211,7 @@ void MainComponent::toggle() {
         txtMapInfo.setText(info);
 
         GidiProcessor::updateCtrlrHandles();
-        processor = std::unique_ptr<GidiProcessor>(new GidiProcessor(cbControllers.getSelectedId() - 1, mapReader.getComponentMap(cbMappings.getSelectedId() - 1), MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1)));
+        processor = std::unique_ptr<GidiProcessor>(new GidiProcessor(cbControllers.getSelectedId() - 1, cbMappings.getSelectedId() - 1, MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1)));
 
         sldrOctave.setValue(processor->getOctaveChange());
         sldrPitch.setValue(processor->getPitchChange());

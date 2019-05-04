@@ -4,6 +4,8 @@
 #include "GidiProcessor.h"
 #include "AppSettings.h"
 #include <nlohmann/json.hpp>
+#include "GamepadMap.h"
+#include "ComponentType.h"
 
 using json = nlohmann::json;
 
@@ -20,9 +22,29 @@ class MapReader {
     
 
     public:
-        const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", 
-                                                    "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide", "RTrigger",
-                                                    "LTrigger");
+        // NOTE: These tags should correspond with the ComponentType.h
+        const StringArray searchTags = 
+            StringArray("A", 
+                        "B", 
+                        "X", 
+                        "Y", 
+                        "DpadUp", 
+                        "DpadDown", 
+                        "DpadLeft", 
+                        "DpadRight", 
+                        "LBmpr", 
+                        "RBmpr", 
+                        "LStick", 
+                        "RStick", 
+                        "Start", 
+                        "Back",
+                        "Guide", 
+                        "RTrigger",
+                        "LTrigger",
+                        "LStickX",
+                        "LStickY",
+                        "RStickX",
+                        "RStickY");
 
         MapReader() {
             refresh();
@@ -74,6 +96,32 @@ class MapReader {
                 }
             }
             return componentMap;
+        }
+
+        GamepadMap<Array<int>>* createComponentMap(int index) 
+        {
+            GamepadMap<Array<int>>* compMap = new GamepadMap<Array<int>>();
+            
+            json rawMap = loadedMaps[index];
+
+            for (auto tag : searchTags) {
+                Array<int> mappedFunctions;
+                if (rawMap["map"][tag.toStdString()].is_string()) { // component only holds 1 function
+                    mappedFunctions.add(GidiProcessor::parseNote(rawMap["map"][tag.toStdString()].get<std::string>()));
+                }
+                else if (rawMap["map"][tag.toStdString()].is_array()) {
+                    for (auto item : rawMap["map"][tag.toStdString()].get<std::vector<std::string>>()) {
+                        mappedFunctions.add(GidiProcessor::parseNote(item));
+                    }
+                }
+
+                // Now we have our mapped functions, we can add them to our component map
+                if (mappedFunctions.size() > 0) {
+                    ComponentType ct = (ComponentType) searchTags.indexOf(tag);
+                    compMap->insert_or_assign(ct, mappedFunctions);
+                }
+            }
+            return compMap;
         }
 
         struct MapInfo {

@@ -28,6 +28,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         static int availableControllers;
 
         int activeControllerIndex = -1;
+        int activeMapIndex = -1;
 
         HashMap<String, bool> prevButtonState;
         HashMap<String, bool> currButtonState;
@@ -64,7 +65,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         static void updateCtrlrHandles();
 
         GidiProcessor();
-        GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* mapping, MidiOutput* midiOut);
+        GidiProcessor(int controllerIndex, int mapIndex, MidiOutput* midiOut);
         ~GidiProcessor();
 
         int getCurrentVelocity() {return defaultVelocity;}
