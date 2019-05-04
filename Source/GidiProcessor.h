@@ -1,9 +1,12 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "GamepadMap.h"
+#include "ComponentType.h"
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <memory>
+#include <variant>
 
 /*
     Core of Gidi 
@@ -32,11 +35,16 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         HashMap<String, int> currAxisState;
         HashMap<String, Array<int>>* componentMap;
 
+        GamepadMap<std::variant<bool, int>> prevCompState;
+        GamepadMap<std::variant<bool, int>> currCompState;
+        GamepadMap<Array<int>> compMap;
+
         Array<MidiMessage> msgQueue;
 
         void handleButtonChanges();
         void recordControllerState();
         void handleAxisMessages();
+        void handleComponentChanges();
 
         int defaultVelocity = 100;
         int octaveChange = 0;

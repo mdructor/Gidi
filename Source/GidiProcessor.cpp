@@ -1,4 +1,5 @@
 #include "GidiProcessor.h"
+#include "GamepadMap.h"
 
 SDL_GameController* GidiProcessor::controllerHandles[MAX_CONTROLLERS];
 int GidiProcessor::availableControllers;
@@ -109,10 +110,34 @@ GidiProcessor::GidiProcessor() : Thread("ControllerProcessing") {
 GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* compMap, MidiOutput* midi) : Thread("ControllerProcessing") {
 
     activeControllerIndex = controllerIndex;
-    componentMap = compMap;
+    componentMap = compMap; // TO REMOVE
     midiOut = std::unique_ptr<MidiOutput>(midi);
     midiState = new MidiKeyboardState();
     
+
+    prevCompState.insert(std::make_pair(ComponentType::A, false));
+    prevCompState.insert(std::make_pair(ComponentType::B, false));
+    prevCompState.insert(std::make_pair(ComponentType::X, false));
+    prevCompState.insert(std::make_pair(ComponentType::Y, false));
+    prevCompState.insert(std::make_pair(ComponentType::DpadUp, false));
+    prevCompState.insert(std::make_pair(ComponentType::DpadDown, false));
+    prevCompState.insert(std::make_pair(ComponentType::DpadLeft, false));
+    prevCompState.insert(std::make_pair(ComponentType::DpadRight, false));
+    prevCompState.insert(std::make_pair(ComponentType::LBmpr, false));
+    prevCompState.insert(std::make_pair(ComponentType::RBmpr, false));
+    prevCompState.insert(std::make_pair(ComponentType::LStick, false));
+    prevCompState.insert(std::make_pair(ComponentType::RStick, false));
+    prevCompState.insert(std::make_pair(ComponentType::Start, false));
+    prevCompState.insert(std::make_pair(ComponentType::Back, false));
+    prevCompState.insert(std::make_pair(ComponentType::Guide, false));
+    prevCompState.insert(std::make_pair(ComponentType::LTrigger, 0));
+    prevCompState.insert(std::make_pair(ComponentType::RTrigger, 0));
+    prevCompState.insert(std::make_pair(ComponentType::LStickX, 0));
+    prevCompState.insert(std::make_pair(ComponentType::LStickY, 0));
+    prevCompState.insert(std::make_pair(ComponentType::RStickX, 0));
+    prevCompState.insert(std::make_pair(ComponentType::RStickY, 0));
+
+    /* TO REMOVE
     prevButtonState.set("A", false);
     prevButtonState.set("B", false);
     prevButtonState.set("X", false); 
@@ -128,13 +153,13 @@ GidiProcessor::GidiProcessor(int controllerIndex, HashMap<String, Array<int>>* c
     prevButtonState.set("Start", false);
     prevButtonState.set("Back", false);
     prevButtonState.set("Guide", false);
-
     prevAxisState.set("LTrigger", 0);
     prevAxisState.set("RTrigger", 0);
     prevAxisState.set("LStickX", 0);
     prevAxisState.set("LStickY", 0);
     prevAxisState.set("RStickY", 0);
     prevAxisState.set("RStickX", 0);
+    */
 }
 
 GidiProcessor::~GidiProcessor() {
@@ -163,12 +188,12 @@ void GidiProcessor::run() {
 
 void GidiProcessor::pulse() {
     SDL_GameControllerUpdate();
-    SDL_GameController* controller = controllerHandles[activeControllerIndex];
-    if (controller != 0 && SDL_GameControllerGetAttached(controller)) {
+    if (controllerHandles[activeControllerIndex] != 0 && SDL_GameControllerGetAttached(controllerHandles[activeControllerIndex])) {
         recordControllerState();
         // Remember HERE to call pressure sensitive changes before button changes !!! (so velocity controls will take prio)
-        handleAxisMessages();
-        handleButtonChanges();
+        //handleAxisMessages();
+        // handleButtonChanges();
+        handleComponentChanges();
         MidiBuffer buffer; // buffer to add our message queue to
         for (auto msg : msgQueue) {
             if (midiState != nullptr) {
@@ -188,8 +213,32 @@ void GidiProcessor::pulse() {
 }
 
 
-void GidiProcessor::recordControllerState() {
+void GidiProcessor::recordControllerState() 
+{
     SDL_GameController* controller = controllerHandles[activeControllerIndex];
+
+    currCompState.insert_or_assign(ComponentType::A, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_A));
+    currCompState.insert_or_assign(ComponentType::B, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_B));
+    currCompState.insert_or_assign(ComponentType::X, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_X));
+    currCompState.insert_or_assign(ComponentType::Y, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_Y));
+    currCompState.insert_or_assign(ComponentType::DpadUp, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP));
+    currCompState.insert_or_assign(ComponentType::DpadDown, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN));
+    currCompState.insert_or_assign(ComponentType::DpadLeft, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT));
+    currCompState.insert_or_assign(ComponentType::DpadRight, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT));
+    currCompState.insert_or_assign(ComponentType::LBmpr, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSHOULDER));
+    currCompState.insert_or_assign(ComponentType::RBmpr, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER));
+    currCompState.insert_or_assign(ComponentType::LStick, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_LEFTSTICK));
+    currCompState.insert_or_assign(ComponentType::RStick, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_RIGHTSTICK));
+    currCompState.insert_or_assign(ComponentType::Start, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_START));
+    currCompState.insert_or_assign(ComponentType::Guide, SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_GUIDE));
+    currCompState.insert_or_assign(ComponentType::LTrigger, SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT));
+    currCompState.insert_or_assign(ComponentType::RTrigger, SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT));
+    currCompState.insert_or_assign(ComponentType::LStickX, SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX));
+    currCompState.insert_or_assign(ComponentType::LStickY, SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY));
+    currCompState.insert_or_assign(ComponentType::RStickX, SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX));
+    currCompState.insert_or_assign(ComponentType::RStickY, SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY));
+
+    /* TO REMOVE ONCE NEW COMPONENT MAPS WORKING
     currButtonState.set("A", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_A));
     currButtonState.set("B", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_B));
     currButtonState.set("X", SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_X));
@@ -212,6 +261,7 @@ void GidiProcessor::recordControllerState() {
     currAxisState.set("RStickX", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX));
     currAxisState.set("LStickY", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY));
     currAxisState.set("RStickY", SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY));
+    */
 }
 
 void GidiProcessor::handleButtonChanges() { // this is where we send MIDI messages based on button changes
@@ -271,6 +321,7 @@ void GidiProcessor::handleButtonChanges() { // this is where we send MIDI messag
 }
 
 void GidiProcessor::handleAxisMessages() {
+
     for (HashMap<String, int>::Iterator i (currAxisState); i.next();) { // Loop through all axes and send messages a ccordingly 
         String key = i.getKey();
 
@@ -292,5 +343,26 @@ void GidiProcessor::handleAxisMessages() {
                 }
             }
         }
+    }
+}
+
+void GidiProcessor::handleComponentChanges() {
+    for (const auto& i : currCompState) {
+        if (compMap.count(i.first) != 0) { // if our component map contains the current key
+            if (i.second.index() == 0) {  // if the variant is a bool, we are looking at a On/Off button state
+                if (i.second != prevCompState[i.first]) { // button state has changed from prev call!
+                    if (std::get<bool>(i.second)) { // Button got pressed on!
+
+                    } 
+                    else { // Button got turned off!
+
+                    }
+                }
+            }        
+            else { // we must be looking at a Pressure sensitive int
+
+            }
+        }
+        prevCompState.insert_or_assign(i.first, i.second); // set the prev state to our current state
     }
 }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="AdCZpJ" name="mdGidi" projectType="guiapp" jucerVersion="5.4.3">
-  <MAINGROUP id="gashTb" name="mdGidi">
+<JUCERPROJECT id="AdCZpJ" name="Gidi" projectType="guiapp" jucerVersion="5.4.3"
+              cppLanguageStandard="17">
+  <MAINGROUP id="gashTb" name="Gidi">
     <GROUP id="{2271E537-1EC5-58F1-9EA2-52FBD2C1D397}" name="Source">
       <FILE id="ziflUl" name="GamepadComponent.cpp" compile="1" resource="0"
             file="Source/GamepadComponent.cpp"/>
