@@ -232,11 +232,19 @@ void GidiProcessor::handleAxisMessages() {
 */
 
 void GidiProcessor::handleComponentChanges() {
+
+    // TODO : IMPLEMENT THE ABOVE 2 FUNCTIONS HERE
+
     for (const auto& i : currCompState) {
-        // if (compMap.count(i.first) == 0) { // if our component map contains the current key CHANGE ME AHH
+
+        if (compMap.count(i.first) != 0) { // if our component map contains the current key 
+
             if (i.second.index() == 0) {  // if the variant is a bool, we are looking at a On/Off button state
+
                 if (i.second != prevCompState[i.first]) { // button state has changed from prev call!
+
                     if (std::get<bool>(i.second)) { // Button got pressed on!
+
                     } 
                     else { // Button got turned off!
                     }
@@ -245,7 +253,7 @@ void GidiProcessor::handleComponentChanges() {
             else { // we must be looking at a Pressure sensitive int
 
             }
-        // }
+        }
         prevCompState[i.first] = i.second; // set the prev state to our current state
     }
 }
