@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "GidiProcessor.h"
 #include "AppSettings.h"
-#include <nlohmann/json.hpp>
 #include "GamepadMap.h"
 #include "ComponentType.h"
+#include "NoteParser.h"
 
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 /*
@@ -78,26 +78,6 @@ class MapReader {
             return names;
         }
 
-
-        HashMap<String, Array<int>>* getComponentMap(int index) {
-            HashMap<String, Array<int>>* componentMap = new HashMap<String, Array<int>>();
-            json rawMap = loadedMaps[index];
-
-            for (auto tag : searchTags) {
-                if (rawMap["map"][tag.toStdString()].is_string()) {
-                    int parsedNote =  GidiProcessor::parseNote(rawMap["map"][tag.toStdString()].get<std::string>());
-                    componentMap->set(tag, Array<int>(parsedNote));
-                }
-                else if (rawMap["map"][tag.toStdString()].is_array()) {
-                    componentMap->set(tag, Array<int>());
-                    for (auto item : rawMap["map"][tag.toStdString()].get<std::vector<std::string>>()) {
-                        componentMap->getReference(tag).add(GidiProcessor::parseNote(item));
-                    }
-                }
-            }
-            return componentMap;
-        }
-
         GamepadMap<Array<int>>* createComponentMap(int index) 
         {
             GamepadMap<Array<int>>* compMap = new GamepadMap<Array<int>>();
@@ -107,11 +87,11 @@ class MapReader {
             for (auto tag : searchTags) {
                 Array<int> mappedFunctions;
                 if (rawMap["map"][tag.toStdString()].is_string()) { // component only holds 1 function
-                    mappedFunctions.add(GidiProcessor::parseNote(rawMap["map"][tag.toStdString()].get<std::string>()));
+                    mappedFunctions.add(parseNote(rawMap["map"][tag.toStdString()].get<std::string>()));
                 }
                 else if (rawMap["map"][tag.toStdString()].is_array()) {
                     for (auto item : rawMap["map"][tag.toStdString()].get<std::vector<std::string>>()) {
-                        mappedFunctions.add(GidiProcessor::parseNote(item));
+                        mappedFunctions.add(parseNote(item));
                     }
                 }
 

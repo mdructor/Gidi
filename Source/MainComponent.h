@@ -9,6 +9,8 @@
 #include "NewMidiDialog.h"
 #include "AppSettings.h"
 #include "OptionsComponent.h"
+#include "ComponentSpecialFunction.h"
+#include "NoteParser.h"
 
 // Content of the main window -- holds control over the GidiProcessor
 

@@ -68,6 +68,7 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS_APP := \
+  $(JUCE_OBJDIR)/NoteParser_a6c06fba.o \
   $(JUCE_OBJDIR)/GamepadComponent_3aaeb25.o \
   $(JUCE_OBJDIR)/GidiProcessor_bda9c94c.o \
   $(JUCE_OBJDIR)/OptionsComponent_daeb5708.o \
@@ -100,6 +101,11 @@ $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) : $(OBJECTS_APP) $(RESOURCES)
 	-$(V_AT)mkdir -p $(JUCE_LIBDIR)
 	-$(V_AT)mkdir -p $(JUCE_OUTDIR)
 	$(V_AT)$(CXX) -o $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(OBJECTS_APP) $(JUCE_LDFLAGS) $(JUCE_LDFLAGS_APP) $(RESOURCES) $(TARGET_ARCH)
+
+$(JUCE_OBJDIR)/NoteParser_a6c06fba.o: ../../Source/NoteParser.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling NoteParser.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/GamepadComponent_3aaeb25.o: ../../Source/GamepadComponent.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)

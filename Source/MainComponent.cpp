@@ -295,6 +295,8 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster* source) {
 }
 
 void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
+    // Temporarily disabled while we change to GamepadMap
+    /*
     const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide", "LTrigger", "RTrigger"); 
     if (source->isMouseOver()) {
         if (gamepadComponent->ctrlrBtns->containsValue(source)) {
@@ -304,22 +306,22 @@ void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
                         String builder = tag + ":\n";
                         for (auto compVal : processor->getcomponentMap()->operator[](tag)) {
                             switch (compVal) {
-                                case GidiProcessor::ComponentSpecialFunctions::OctaveDown:
+                                case (int) ComponentSpecialFunction::OctaveDown:
                                     builder += "Octave Down\n";
                                     break;
-                                case GidiProcessor::ComponentSpecialFunctions::OctaveUp:
+                                case (int) ComponentSpecialFunction::OctaveUp:
                                     builder += "Octave Up\n";
                                     break;
-                                case GidiProcessor::ComponentSpecialFunctions::PitchDown:
+                                case (int) ComponentSpecialFunction::PitchDown:
                                     builder += "Pitch Down\n";
                                     break;
-                                case GidiProcessor::ComponentSpecialFunctions::PitchUp:
+                                case (int) ComponentSpecialFunction::PitchUp:
                                     builder += "Pitch Up\n";
                                     break;
-                                case GidiProcessor::ComponentSpecialFunctions::Velocity:
+                                case (int) ComponentSpecialFunction::Velocity:
                                     builder += "Velocity\n";
                                     break;
-                                case GidiProcessor::ComponentSpecialFunctions::PitchBend:
+                                case (int) ComponentSpecialFunction::PitchBend:
                                     builder += "Pitch Bend\n";
                                     break;
                                 default:
@@ -337,4 +339,5 @@ void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
         String info = "Map: " + mapInfo.name + "\n" + "Author: " + mapInfo.author + "\n";
         txtMapInfo.setText(info);;
     }
+    */
 }

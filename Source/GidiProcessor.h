@@ -3,6 +3,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "GamepadMap.h"
 #include "ComponentType.h"
+#include "MapReader.h"
+#include "NoteParser.h"
+#include "ComponentSpecialFunction.h"
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <memory>
@@ -30,15 +33,19 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         int activeControllerIndex = -1;
         int activeMapIndex = -1;
 
+        /*
         HashMap<String, bool> prevButtonState;
         HashMap<String, bool> currButtonState;
         HashMap<String, int> prevAxisState;
         HashMap<String, int> currAxisState;
         HashMap<String, Array<int>>* componentMap;
+        */
+
+        MapReader mapReader;
 
         GamepadMap<std::variant<bool, int>> prevCompState;
         GamepadMap<std::variant<bool, int>> currCompState;
-        GamepadMap<Array<int>> compMap;
+        GamepadMap<Array<int>>* compMap = nullptr;
 
         Array<MidiMessage> msgQueue;
 
@@ -58,9 +65,6 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
     public:
 
-        enum ComponentSpecialFunctions {PitchUp=1, PitchDown=2, OctaveUp=3, OctaveDown=4, Velocity=5, PitchBend=6};
-
-        static int parseNote(String note);
         static Array<String> getCtrlrNames();
         static void updateCtrlrHandles();
 
@@ -79,8 +83,6 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
         MidiKeyboardState* getBoardState() { return midiState; }
         void setBoardState( MidiKeyboardState* state) { midiState = state;}
-
-        HashMap<String, Array<int>>* getcomponentMap() {return componentMap;}
 
         void pulse();
         virtual void run() override;
