@@ -60,6 +60,7 @@ class MainComponent   : public Component, public ChangeListener
         void onSldrPitchChange();
 
         void onGamepadButtonStateChange(ControllerButton* src);
+
     public:
         MainComponent();
         ~MainComponent();

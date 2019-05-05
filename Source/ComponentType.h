@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../JuceLibraryCode/JuceHeader.h"
+
 enum class ComponentType {
     A, 
     B, 
@@ -23,3 +25,5 @@ enum class ComponentType {
     RStickX,
     RStickY
 };
+
+String ComponentTypeToString(ComponentType ct);

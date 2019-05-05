@@ -295,42 +295,24 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster* source) {
 }
 
 void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
-    // Temporarily disabled while we change to GamepadMap
-    /*
-    const StringArray searchTags = StringArray("A", "B", "X", "Y", "DpadUp", "DpadDown", "DpadLeft", "DpadRight", "LStick", "RStick", "RBmpr", "LBmpr", "Start", "Back", "Guide", "LTrigger", "RTrigger"); 
     if (source->isMouseOver()) {
-        if (gamepadComponent->ctrlrBtns->containsValue(source)) {
-            for (auto tag : searchTags) {
-                if (gamepadComponent->ctrlrBtns->contains(tag)) {
-                    if (gamepadComponent->ctrlrBtns->operator[](tag) == source) {
-                        String builder = tag + ":\n";
-                        for (auto compVal : processor->getcomponentMap()->operator[](tag)) {
-                            switch (compVal) {
-                                case (int) ComponentSpecialFunction::OctaveDown:
-                                    builder += "Octave Down\n";
-                                    break;
-                                case (int) ComponentSpecialFunction::OctaveUp:
-                                    builder += "Octave Up\n";
-                                    break;
-                                case (int) ComponentSpecialFunction::PitchDown:
-                                    builder += "Pitch Down\n";
-                                    break;
-                                case (int) ComponentSpecialFunction::PitchUp:
-                                    builder += "Pitch Up\n";
-                                    break;
-                                case (int) ComponentSpecialFunction::Velocity:
-                                    builder += "Velocity\n";
-                                    break;
-                                case (int) ComponentSpecialFunction::PitchBend:
-                                    builder += "Pitch Bend\n";
-                                    break;
-                                default:
-                                    builder += "Note On: " + MidiMessage::getMidiNoteName(compVal, true, true, 4) + "\n";
-                            }
+        for (const auto& i : *(gamepadComponent->ctrlrBtns)) {
+            if (i.second == source) {
+                String builder = ComponentTypeToString(i.first) + ":\n";
+                GamepadMap<Array<int>>* gpm = processor->getComponentMap();
+                if (gpm->count(i.first) != 0) {
+                    for (const auto& n : gpm->operator[](i.first)) {
+                        if (n < 20) { // TODO : May need to change this for max functions DEFINITELY SOMETIME
+                            builder += ComponentSpecialFunctionToString((ComponentSpecialFunction) n) + "\n";
                         }
-                        txtMapInfo.setText(builder);
+                        else {
+                            builder += "Note On: " + MidiMessage::getMidiNoteName(n, true, true, 4) + "\n";
+                        }
                     }
+
                 }
+                txtMapInfo.setText(builder);
+                break;
             }
         }
     }
@@ -339,5 +321,5 @@ void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
         String info = "Map: " + mapInfo.name + "\n" + "Author: " + mapInfo.author + "\n";
         txtMapInfo.setText(info);;
     }
-    */
+    
 }

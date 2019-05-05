@@ -4,6 +4,8 @@
               cppLanguageStandard="17">
   <MAINGROUP id="gashTb" name="Gidi">
     <GROUP id="{2271E537-1EC5-58F1-9EA2-52FBD2C1D397}" name="Source">
+      <FILE id="B9yAZf" name="ComponentSpecialFunction.cpp" compile="1" resource="0"
+            file="Source/ComponentSpecialFunction.cpp"/>
       <FILE id="hGzrtp" name="NoteParser.h" compile="0" resource="0" file="Source/NoteParser.h"/>
       <FILE id="ry6EJq" name="NoteParser.cpp" compile="1" resource="0" file="Source/NoteParser.cpp"/>
       <FILE id="p8zCCH" name="GamepadMap.h" compile="0" resource="0" file="Source/GamepadMap.h"/>
@@ -29,6 +31,8 @@
             file="Source/MainComponent.cpp"/>
       <FILE id="PEV3J1" name="AppSettings.cpp" compile="1" resource="0" file="Source/AppSettings.cpp"/>
       <FILE id="PDhkFM" name="AppSettings.h" compile="0" resource="0" file="Source/AppSettings.h"/>
+      <FILE id="y1fdTF" name="ComponentType.cpp" compile="1" resource="0"
+            file="Source/ComponentType.cpp"/>
       <FILE id="PNiCWn" name="NewMidiDialog.h" compile="1" resource="0" file="Source/NewMidiDialog.h"/>
       <FILE id="gnmYyv" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>

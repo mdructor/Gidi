@@ -76,6 +76,8 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         MidiKeyboardState* getBoardState() { return midiState; }
         void setBoardState( MidiKeyboardState* state) { midiState = state;}
 
+        GamepadMap<Array<int>>* getComponentMap() { return compMap;}
+
         void pulse();
         virtual void run() override;
 
