@@ -39,12 +39,13 @@ class MapReader {
                         "Start", 
                         "Back",
                         "Guide", 
-                        "RTrigger",
                         "LTrigger",
+                        "RTrigger",
                         "LStickX",
                         "LStickY",
                         "RStickX",
-                        "RStickY");
+                        "RStickY" 
+                       );
 
         MapReader() {
             refresh();
