@@ -33,14 +33,6 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         int activeControllerIndex = -1;
         int activeMapIndex = -1;
 
-        /*
-        HashMap<String, bool> prevButtonState;
-        HashMap<String, bool> currButtonState;
-        HashMap<String, int> prevAxisState;
-        HashMap<String, int> currAxisState;
-        HashMap<String, Array<int>>* componentMap;
-        */
-
         MapReader mapReader;
 
         GamepadMap<std::variant<bool, int>> prevCompState;

@@ -78,8 +78,8 @@ GidiProcessor::~GidiProcessor() {
     compMap = nullptr;
 }
 
-void GidiProcessor::run() {
-
+void GidiProcessor::run() 
+{
     while (!threadShouldExit()) {
         wait(6);
         const MessageManagerLock mm1 (Thread::getCurrentThread());
@@ -90,16 +90,13 @@ void GidiProcessor::run() {
 
         pulse();
     }
-
 }
 
-void GidiProcessor::pulse() {
+void GidiProcessor::pulse() 
+{
     SDL_GameControllerUpdate();
     if (controllerHandles[activeControllerIndex] != 0 && SDL_GameControllerGetAttached(controllerHandles[activeControllerIndex])) {
         recordControllerState();
-        // Remember HERE to call pressure sensitive changes before button changes !!! (so velocity controls will take prio)
-        //handleAxisMessages();
-        // handleButtonChanges();
         handleComponentChanges();
         MidiBuffer buffer; // buffer to add our message queue to
         for (auto msg : msgQueue) {

@@ -54,8 +54,8 @@ MainComponent::MainComponent()
     txtMapInfo.setText("Welcome to Gidi!\nSelect a midi port, controller, and mapping then press the play button to begin!\n");
 
     gamepadComponent->setEnabled(false);
-    for (auto btn : *gamepadComponent->ctrlrBtns) {
-        btn->onStateChange = [this,btn] {onGamepadButtonStateChange(btn);};
+    for (auto i : *gamepadComponent->ctrlrBtns) {
+        i.second->onStateChange = [this,i] {onGamepadButtonStateChange(i.second);};
     }
 
     // adding in sections, left column down, then right column down, then footer

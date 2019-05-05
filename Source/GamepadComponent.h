@@ -2,6 +2,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerButton.h"
+#include "GamepadMap.h"
+#include "ComponentType.h"
 
 /* 
     UI component that holds a collection of buttons
@@ -17,7 +19,9 @@ class GamepadComponent : public Component
         GamepadComponent();
         ~GamepadComponent();
 
-        HashMap<String, ControllerButton*>* ctrlrBtns;
+        GamepadMap<ControllerButton*>* ctrlrBtns;
+
+
 
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GamepadComponent)
 };
