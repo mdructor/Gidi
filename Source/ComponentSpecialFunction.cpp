@@ -9,5 +9,6 @@ String ComponentSpecialFunctionToString(ComponentSpecialFunction csf)
         case ComponentSpecialFunction::OctaveDown: return "Octave Down";
         case ComponentSpecialFunction::Velocity: return "Velocity";
         case ComponentSpecialFunction::PitchBend: return "Pitch Bend";
+        case ComponentSpecialFunction::Sustain: return "Sustain";
     }
 }

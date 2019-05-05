@@ -13,6 +13,7 @@
         "RBmpr": ["G4", "B4", "D5"],
         "LBmpr": ["A4", "C5", "E5"],
         "DpadUp": ["B4", "D5", "F5"],
+        "DpadLeft": "Sustain",
         "RTrigger": "PitchBend"
     }
 }

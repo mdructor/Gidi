@@ -24,6 +24,9 @@ int parseNote(String note)
     else if (note == "PitchBend") {
         return (int) ComponentSpecialFunction::PitchBend;
     }
+    else if (note == "Sustain") {
+        return (int) ComponentSpecialFunction::Sustain;
+    }
 
     int result = 0; 
     note = note.trim();

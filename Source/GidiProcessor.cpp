@@ -173,6 +173,10 @@ void GidiProcessor::handleComponentChanges() {
                                     setPitchChange(getPitchChange() + 1);
                                     sendChangeMessage();
                                     break;
+                                case (int) ComponentSpecialFunction::Sustain: 
+                                    sustainOn = true;
+                                    notesOn.add(func);
+                                    break;
                                 default:
                                     func += octaveChange * 12;
                                     func += pitchChange;
@@ -185,15 +189,30 @@ void GidiProcessor::handleComponentChanges() {
                     else { // Button got turned off!
                         for (auto func : compMap->operator[](i.first)) {
                             switch(func) {
-                                case (int) ComponentSpecialFunction::OctaveUp:
-                                case (int) ComponentSpecialFunction::OctaveDown:
-                                case (int) ComponentSpecialFunction::PitchDown:
-                                case (int) ComponentSpecialFunction::PitchUp:
+                                case (int) ComponentSpecialFunction::Sustain:
+                                    if (notesOn.contains(func)) {
+                                        notesOn.removeFirstMatchingValue(func);
+                                        if (!notesOn.contains(func)) {
+                                            for (auto note : notesSustained) {
+                                                if (notesOn.contains(note)) {
+                                                    notesOn.removeFirstMatchingValue(note);
+                                                    if (!notesOn.contains(note)) {
+                                                        msgQueue.add(MidiMessage::noteOff(1, note));
+                                                    }
+                                                }
+                                            }
+                                            notesSustained.clear();
+                                            sustainOn = false;
+                                        }
+                                    }
                                     break;
                                 default:
                                     func += octaveChange * 12;
                                     func += pitchChange;
-                                    if (notesOn.contains(func)) {
+                                    if (sustainOn) {
+                                        notesSustained.add(func);
+                                    }
+                                    if (notesOn.contains(func) && !sustainOn) {
                                         notesOn.removeFirstMatchingValue(func);
                                         if (!notesOn.contains(func)) {
                                             msgQueue.add(MidiMessage::noteOff(1, func));

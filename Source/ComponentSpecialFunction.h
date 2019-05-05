@@ -9,7 +9,8 @@ enum class ComponentSpecialFunction
     OctaveUp = 3, 
     OctaveDown = 4, 
     Velocity = 5, 
-    PitchBend = 6
+    PitchBend = 6,
+    Sustain = 7
 };
 
 String ComponentSpecialFunctionToString(ComponentSpecialFunction csf);

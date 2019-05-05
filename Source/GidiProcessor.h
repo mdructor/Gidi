@@ -41,6 +41,9 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
         Array<int> notesOn;
 
+        bool sustainOn = false;
+        Array<int> notesSustained;
+
         Array<MidiMessage> msgQueue;
 
         void handleButtonChanges();
