@@ -39,6 +39,8 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         GamepadMap<std::variant<bool, int>> currCompState;
         GamepadMap<Array<int>>* compMap = nullptr;
 
+        Array<int> notesOn;
+
         Array<MidiMessage> msgQueue;
 
         void handleButtonChanges();

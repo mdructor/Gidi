@@ -176,6 +176,7 @@ void GidiProcessor::handleComponentChanges() {
                                 default:
                                     func += octaveChange * 12;
                                     func += pitchChange;
+                                    notesOn.add(func);
                                     msgQueue.add(MidiMessage::noteOn(1, func,(uint8)defaultVelocity));
                                     break;
                             }
@@ -192,7 +193,12 @@ void GidiProcessor::handleComponentChanges() {
                                 default:
                                     func += octaveChange * 12;
                                     func += pitchChange;
-                                    msgQueue.add(MidiMessage::noteOff(1, func));
+                                    if (notesOn.contains(func)) {
+                                        notesOn.removeFirstMatchingValue(func);
+                                        if (!notesOn.contains(func)) {
+                                            msgQueue.add(MidiMessage::noteOff(1, func));
+                                        }
+                                    }
                                     break;
                             }
                         }
