@@ -1,4 +1,5 @@
 {
     "icons-directory": "icons/",
-    "map-directory" : "mappings/"
+    "map-directory" : "mappings/",
+    "midi-channel" : 1 
 }

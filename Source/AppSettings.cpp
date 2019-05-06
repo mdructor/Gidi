@@ -2,6 +2,7 @@
 
 String AppSettings::mapDirectory;
 String AppSettings::iconsDirectory;
+int AppSettings::midiChannel;
 
 bool AppSettings::loadAppSettings() {
     File settingsFile = File::getCurrentWorkingDirectory().getChildFile("settings.json");
@@ -24,6 +25,14 @@ bool AppSettings::loadAppSettings() {
         iconsDirectory = "";
     }
 
+    midiChannel = 0;
+    if (parsedSettings["midi-channel"].is_number_integer()) {
+        midiChannel = parsedSettings["midi-channel"].get<int>();
+    }
+    if (midiChannel < 1 || midiChannel > 15) {
+        midiChannel = 1;
+    }
+
     return true;
 }
 
@@ -41,4 +50,16 @@ String AppSettings::getMapDirectory() {
 
 String AppSettings::getIconsDirectory() {
     return iconsDirectory;
+}
+
+
+int AppSettings::getMidiChannel() {
+    return midiChannel;
+}
+
+void AppSettings::setMidiChannel(int c) {
+    if (c < 1 || c > 15) {
+        return;
+    }
+    midiChannel = c;
 }

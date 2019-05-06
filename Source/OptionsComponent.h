@@ -13,6 +13,10 @@ class OptionsComponent : public Component
         TextButton     btnCancel;
         TextButton     btnSave;
 
+        Label lblMidiChannel;
+        Slider sldrMidiChannel;
+        
+
         void resized() override;
         void paint(Graphics& g) override;
 

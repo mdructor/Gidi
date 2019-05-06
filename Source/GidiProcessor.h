@@ -6,6 +6,7 @@
 #include "MapReader.h"
 #include "NoteParser.h"
 #include "ComponentSpecialFunction.h"
+#include "AppSettings.h"
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <memory>
@@ -32,6 +33,8 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
         int activeControllerIndex = -1;
         int activeMapIndex = -1;
+
+        int midiChannel = 1;
 
         MapReader mapReader;
 

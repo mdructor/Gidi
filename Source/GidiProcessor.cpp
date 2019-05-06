@@ -46,6 +46,7 @@ GidiProcessor::GidiProcessor(int controllerIndex, int mapIndex, MidiOutput* midi
 
     midiOut = std::unique_ptr<MidiOutput>(midi);
     midiState = new MidiKeyboardState();
+    midiChannel = AppSettings::getMidiChannel();
 
     prevCompState.insert_or_assign(ComponentType::A, false);
     prevCompState.insert_or_assign(ComponentType::B, false);
@@ -181,7 +182,7 @@ void GidiProcessor::handleComponentChanges() {
                                     func += octaveChange * 12;
                                     func += pitchChange;
                                     notesOn.add(func);
-                                    msgQueue.add(MidiMessage::noteOn(1, func,(uint8)defaultVelocity));
+                                    msgQueue.add(MidiMessage::noteOn(midiChannel, func,(uint8)defaultVelocity));
                                     break;
                             }
                         }
@@ -197,7 +198,7 @@ void GidiProcessor::handleComponentChanges() {
                                                 if (notesOn.contains(note)) {
                                                     notesOn.removeFirstMatchingValue(note);
                                                     if (!notesOn.contains(note)) {
-                                                        msgQueue.add(MidiMessage::noteOff(1, note));
+                                                        msgQueue.add(MidiMessage::noteOff(midiChannel, note));
                                                     }
                                                 }
                                             }
