@@ -59,7 +59,12 @@ class MapReader {
             if (dir.exists() && dir.isDirectory()) {
                 Array<File> maps = dir.findChildFiles(File::TypesOfFileToFind::findFiles, true, "*.json");
                 for (auto map : maps) {
-                    loadedMaps.add(json::parse(map.loadFileAsString().toStdString()));
+                    try {
+                        loadedMaps.add(json::parse(map.loadFileAsString().toStdString()));
+                    }
+                    catch (const json::parse_error& e) {
+                        printf("Failed to parse map: %s\n", map.getFileName().toRawUTF8());
+                    }
                 }
             }
             else {
