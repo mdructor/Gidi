@@ -14,16 +14,16 @@
 
 // Content of the main window -- holds control over the GidiProcessor
 
-class MainComponent   : public Component, public ChangeListener
+class MainComponent   : public Component, public ChangeListener, public Timer
 {
     private:
+        const int REFRESH_TIME = 2000; // time between combo box refreshes
+
         ComboBox    cbControllers; 
         ComboBox    cbMappings;
         ComboBox    cbMidiPorts;
-        ImageButton btnRefresh;
         ImageButton btnSettings;
         ImageButton btnToggle;
-        Image refreshImage = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("refresh-button.png"));
         Image settingsIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("settings.png"));
         Image playIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("play-button.png")); // TODO: MOVE THIS LOAD ELSEWHERE
         Image pauseIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("pause-button.png"));
@@ -46,6 +46,7 @@ class MainComponent   : public Component, public ChangeListener
 
         MapReader mapReader;        
 
+
         bool isProcessing = false;
 
         void refreshComboBoxes();
@@ -66,6 +67,8 @@ class MainComponent   : public Component, public ChangeListener
         void paint (Graphics& g) override;
         void resized() override;
         virtual void changeListenerCallback(ChangeBroadcaster* source) override;
+        virtual void timerCallback() override;
+        
 
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

@@ -6,6 +6,7 @@ int GidiProcessor::availableControllers;
 
 
 void GidiProcessor::updateCtrlrHandles() {
+    SDL_GameControllerUpdate();
     int cIndex = 0;
     for (int jIndex=0; jIndex < SDL_NumJoysticks(); ++jIndex) {
         if (!SDL_IsGameController(jIndex)) {
@@ -22,6 +23,7 @@ void GidiProcessor::updateCtrlrHandles() {
 
 Array<String> GidiProcessor::getCtrlrNames() 
 {
+    SDL_GameControllerUpdate();
     Array<String> names;
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         if (SDL_IsGameController(i)) {

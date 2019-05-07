@@ -8,8 +8,6 @@ MainComponent::MainComponent()
     gamepadComponent = std::unique_ptr<GamepadComponent>(new GamepadComponent());
 
     // Button setup
-    btnRefresh.setImages(false, true, false, refreshImage, 1, Colours::white, refreshImage, .5, Colours::lightgrey, refreshImage, .25, Colours::whitesmoke);
-    btnRefresh.onClick = [this] { refreshComboBoxes(); };
     btnToggle.setImages(false, true, false, playIcon, 1, Colours::white, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
     btnToggle.onClick = [this] { toggle(); };
     btnSettings.setImages(false, true, false, settingsIcon, 1, Colours::white, settingsIcon, .5, Colours::lightgrey, settingsIcon, .25, Colours::whitesmoke);
@@ -57,7 +55,6 @@ MainComponent::MainComponent()
     }
 
     // adding in sections, left column down, then right column down, then footer
-    addAndMakeVisible(btnRefresh);
     addAndMakeVisible(btnSettings);
     addAndMakeVisible(btnToggle);
     addAndMakeVisible(cbControllers);
@@ -85,6 +82,7 @@ MainComponent::MainComponent()
     setSize (585, 415);
 
     refreshComboBoxes();
+    startTimer(REFRESH_TIME);
 }
 
 MainComponent::~MainComponent()
@@ -102,9 +100,8 @@ void MainComponent::resized()
     cbMappings.setBounds(80, 85, 200, 25);
 
     // Buttons underneath combo box section
-    btnRefresh.setBounds(30, 130, 30, 30);
-    btnSettings.setBounds(130, 130, 30, 30);
-    btnToggle.setBounds(230, 130, 30, 30);
+    btnSettings.setBounds(90, 130, 30, 30);
+    btnToggle.setBounds(190, 130, 30, 30);
 
     // text boxes below buttons on left side
     txtMapInfo.setBounds(10, 175, 270, 128);
@@ -192,8 +189,8 @@ void MainComponent::toggle() {
     }
 
     if (!isProcessing) { // must be off
+        stopTimer();
         btnToggle.setImages(false, true, false, pauseIcon, 1, Colours::white, pauseIcon, .5, Colours::lightgrey, pauseIcon, .25, Colours::whitesmoke);
-        btnRefresh.setEnabled(false);
         cbMappings.setEnabled(false);
         cbControllers.setEnabled(false);
         cbMidiPorts.setEnabled(false);
@@ -219,9 +216,9 @@ void MainComponent::toggle() {
         processor->startThread(10);
     }
     else {
+        startTimer(REFRESH_TIME);
         btnToggle.setButtonText("Start");
         btnToggle.setImages(false, true, false, playIcon, 1, Colours::white, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
-        btnRefresh.setEnabled(true);
         cbMappings.setEnabled(true);
         cbControllers.setEnabled(true);
         cbMidiPorts.setEnabled(true);
@@ -301,5 +298,9 @@ void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
         String info = "Map: " + mapInfo.name + "\n" + "Author: " + mapInfo.author + "\n";
         txtMapInfo.setText(info);;
     }
-    
+}
+
+void MainComponent::timerCallback() 
+{
+    refreshComboBoxes();
 }
