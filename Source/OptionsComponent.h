@@ -15,6 +15,10 @@ class OptionsComponent : public Component
 
         Label lblMidiChannel;
         Slider sldrMidiChannel;
+
+        Label lblVirtualMidi;
+        TextEditor txtVirtualMidi;
+        TextButton btnVirtualMidi;
         
 
         void resized() override;
@@ -24,6 +28,7 @@ class OptionsComponent : public Component
         void onButtonCancel();
         void onButtonSave();
         void onMapDirectory();
+        void onButtonMidiCreate();
 
 
     public:

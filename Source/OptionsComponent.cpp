@@ -22,6 +22,11 @@ OptionsComponent::OptionsComponent() {
     sldrMidiChannel.setRange(1, 15, 1);
     sldrMidiChannel.setValue(AppSettings::getMidiChannel());
 
+    lblVirtualMidi.setText("Create Midi Out:", NotificationType::dontSendNotification);
+
+    btnVirtualMidi.setButtonText("Create");
+    btnVirtualMidi.onClick = [this] { onButtonMidiCreate(); };
+
 
     addAndMakeVisible(lblMapDirectory);
     addAndMakeVisible(txtMapDirectory);
@@ -29,6 +34,10 @@ OptionsComponent::OptionsComponent() {
 
     addAndMakeVisible(lblMidiChannel);
     addAndMakeVisible(sldrMidiChannel);
+
+    addAndMakeVisible(lblVirtualMidi);
+    addAndMakeVisible(txtVirtualMidi);
+    addAndMakeVisible(btnVirtualMidi);
 
     addAndMakeVisible(btnCancel);
     addAndMakeVisible(btnSave);
@@ -47,6 +56,10 @@ void OptionsComponent::resized() {
 
     lblMidiChannel.setBounds(5, 50, 100, 25);
     sldrMidiChannel.setBounds(105, 50, 290, 25);
+
+    lblVirtualMidi.setBounds(5, 90, 100, 25);
+    txtVirtualMidi.setBounds(125, 90, 200, 25);
+    btnVirtualMidi.setBounds(335, 90, 60, 25);
 
     btnCancel.setBounds(250, 160, 60, 30);
     btnSave.setBounds(330, 160, 60, 30);
@@ -77,5 +90,25 @@ void OptionsComponent::onMapDirectory() {
 
     if (fileChooser.browseForDirectory()) {
         txtMapDirectory.setText(fileChooser.getResult().getFullPathName());
+    }
+}
+
+void OptionsComponent::onButtonMidiCreate() 
+{
+    if (txtVirtualMidi.getText() == "") {
+        return;
+    }
+    else {
+        String name = txtVirtualMidi.getText();
+        #if JUCE_LINUX || JUCE_MAC
+            auto midiout = MidiOutput::createNewDevice(name);
+            if (midiout == nullptr) {
+                printf("Failed to create virtual midi out.\n");
+            }
+            else {
+                printf("Created virtual midi out!\n");
+                txtVirtualMidi.clear();
+            }
+        #endif
     }
 }

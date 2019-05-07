@@ -44,14 +44,12 @@ class MainComponent   : public Component, public ChangeListener
 
         std::unique_ptr<GidiProcessor> processor;
 
-        Array<MidiOutput*> virtualOuts; // Need to fix this sometime
         MapReader mapReader;        
 
         bool isProcessing = false;
 
         void refreshComboBoxes();
         void toggle();
-        void midiChanged();
 
         void openOptionsDialog();
 

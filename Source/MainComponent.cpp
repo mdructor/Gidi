@@ -15,8 +15,6 @@ MainComponent::MainComponent()
     btnSettings.setImages(false, true, false, settingsIcon, 1, Colours::white, settingsIcon, .5, Colours::lightgrey, settingsIcon, .25, Colours::whitesmoke);
     btnSettings.onClick = [this] { openOptionsDialog(); };
 
-    // Combo box listeners
-    cbMidiPorts.onChange = [this] { midiChanged(); };
 
     // Label init
     lblController.setText("Controller:", NotificationType::dontSendNotification);
@@ -176,7 +174,6 @@ void MainComponent::refreshComboBoxes() {
     for (int i = 0; i < cbMidiPorts.getNumItems(); ++i) {
         cbNames.add(cbMidiPorts.getItemText(i));
     }
-    cbNames.removeString("Create new virtual port...");
     int i = 1;
     if (names != cbNames) { // if they were different
         cbMidiPorts.clear();
@@ -184,7 +181,6 @@ void MainComponent::refreshComboBoxes() {
             cbMidiPorts.addItem(name, i);
             ++i;
         }
-        cbMidiPorts.addItem("Create new virtual port...", i);
     }
 }
 
@@ -242,22 +238,6 @@ void MainComponent::toggle() {
         if (processor) {
             processor.reset();
         }
-    }
-}
-
-void MainComponent::midiChanged() {
-
-    if (cbMidiPorts.getSelectedId() == cbMidiPorts.getNumItems()) { // if they selected create new midi portA
-
-        DialogWindow::LaunchOptions dialogOptions;
-        dialogOptions.dialogTitle = "New virtual MIDI port";
-        String* name = new String();
-        dialogOptions.content.set(new NewMidiDialog(name), true);
-        dialogOptions.launchAsync();
-        if (name->isNotEmpty()) {
-            virtualOuts.add(MidiOutput::createNewDevice(*name));
-        }
-        refreshComboBoxes();
     }
 }
 
