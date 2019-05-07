@@ -55,6 +55,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         void handleComponentChanges();
 
         int defaultVelocity = 100;
+        int currentVelocity = defaultVelocity;
         int octaveChange = 0;
         int pitchChange = 0;
 
@@ -72,7 +73,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         GidiProcessor(int controllerIndex, int mapIndex, MidiOutput* midiOut);
         ~GidiProcessor();
 
-        int getCurrentVelocity() {return defaultVelocity;}
+        int getCurrentVelocity() {return currentVelocity;}
         void setDefaultVelocity(int velocity) {defaultVelocity = velocity;}
 
         int getOctaveChange() {return octaveChange;}

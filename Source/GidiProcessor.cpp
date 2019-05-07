@@ -182,7 +182,7 @@ void GidiProcessor::handleComponentChanges() {
                                     func += octaveChange * 12;
                                     func += pitchChange;
                                     notesOn.add(func);
-                                    msgQueue.add(MidiMessage::noteOn(midiChannel, func,(uint8)defaultVelocity));
+                                    msgQueue.add(MidiMessage::noteOn(midiChannel, func,(uint8)currentVelocity));
                                     break;
                             }
                         }
@@ -238,7 +238,12 @@ void GidiProcessor::handleComponentChanges() {
                             msgQueue.add(MidiMessage::pitchWheel(1, position));
                             break;
                         case (int) ComponentSpecialFunction::Velocity:
-                            // DO Velocity stuff here
+                            if (position > 0) {
+                                currentVelocity = (127 * pct_down);
+                            }
+                            else {
+                                currentVelocity = defaultVelocity;
+                            }
                             break;
                     }
                 }
