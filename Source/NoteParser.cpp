@@ -34,6 +34,20 @@ int parseNote(String note)
         return -1;
     } 
     note = note.toLowerCase(); // can at least be NOT case-sensitive
+
+    if (note == "a0") { // handle the midi 0 notes 
+        return 21;
+    }
+    else if (note == "a#0" || note == "bb0") {
+        return 22;
+    }
+    else if (note == "b0") {
+        return 23;
+    }
+    else if (note == "c8") {
+        return 108;
+    }
+
     auto first = note[0];
     if (first < 'a' || first > 'g') { // first char must be a note between a - g
         return -1;
@@ -67,7 +81,7 @@ int parseNote(String note)
             return -1;
         }
         auto third = note[2];
-        if (third < '1' || third > '8') {
+        if (third < '1' || third > '7') {
             return -1;
         }
         else {

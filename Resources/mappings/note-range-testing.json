@@ -1,0 +1,23 @@
+{
+    "info": {
+        "name": "Note Range Testing",
+        "author": "Mason",
+        "default-velocity": 80 
+    },
+
+    "map": {
+        "A": "A0",
+        "B": "A#0",
+        "X": "B0",
+        "Y": "F4",
+        "RBmpr": "G4",
+        "LBmpr": "A4",
+        "DpadUp": "OctaveUp",
+        "DpadLeft": "PitchDown",
+        "DpadRight": "PitchUp",
+        "DpadDown": "OctaveDown",
+
+        "RTrigger": "PitchBend"
+
+    }
+}

@@ -161,20 +161,28 @@ void GidiProcessor::handleComponentChanges() {
                         for (auto func : compMap->operator[](i.first)) {
                             switch(func) {
                                 case (int) ComponentSpecialFunction::OctaveUp:
-                                    setOctaveChange(getOctaveChange() + 1);
-                                    sendChangeMessage();
+                                    if (getOctaveChange() < 6)  {
+                                        setOctaveChange(getOctaveChange() + 1);
+                                        sendChangeMessage();
+                                    }
                                     break;
                                 case (int) ComponentSpecialFunction::OctaveDown:
-                                    setOctaveChange(getOctaveChange() - 1);
-                                    sendChangeMessage();
+                                    if (getOctaveChange() > -6) {
+                                        setOctaveChange(getOctaveChange() - 1);
+                                        sendChangeMessage();
+                                    }
                                     break;
                                 case (int) ComponentSpecialFunction::PitchDown:
-                                    setPitchChange(getPitchChange() - 1);
-                                    sendChangeMessage();
+                                    if (getPitchChange() > -11) {
+                                        setPitchChange(getPitchChange() - 1);
+                                        sendChangeMessage();
+                                    }
                                     break;
                                 case (int) ComponentSpecialFunction::PitchUp:
-                                    setPitchChange(getPitchChange() + 1);
-                                    sendChangeMessage();
+                                    if (getPitchChange() < 11) {
+                                        setPitchChange(getPitchChange() + 1);
+                                        sendChangeMessage();
+                                    }
                                     break;
                                 case (int) ComponentSpecialFunction::Sustain: 
                                     sustainOn = true;
@@ -183,8 +191,10 @@ void GidiProcessor::handleComponentChanges() {
                                 default:
                                     func += octaveChange * 12;
                                     func += pitchChange;
-                                    notesOn.add(func);
-                                    msgQueue.add(MidiMessage::noteOn(midiChannel, func,(uint8)currentVelocity));
+                                    if (func >= 21 && func <= 108) { // range of midi notes
+                                        notesOn.add(func);
+                                        msgQueue.add(MidiMessage::noteOn(midiChannel, func,(uint8)currentVelocity));
+                                    }                                     
                                     break;
                             }
                         }
@@ -212,15 +222,17 @@ void GidiProcessor::handleComponentChanges() {
                                 default:
                                     func += octaveChange * 12;
                                     func += pitchChange;
-                                    if (sustainOn) {
-                                        notesSustained.add(func);
-                                    }
-                                    if (notesOn.contains(func) && !sustainOn) {
-                                        notesOn.removeFirstMatchingValue(func);
-                                        if (!notesOn.contains(func)) {
-                                            msgQueue.add(MidiMessage::noteOff(1, func));
+                                    if (func >= 21 && func <= 108) { // range of midi notes
+                                        if (sustainOn) {
+                                            notesSustained.add(func);
                                         }
-                                    }
+                                        if (notesOn.contains(func) && !sustainOn) {
+                                            notesOn.removeFirstMatchingValue(func);
+                                            if (!notesOn.contains(func)) {
+                                                msgQueue.add(MidiMessage::noteOff(1, func));
+                                            }
+                                        }
+                                    }                                     
                                     break;
                             }
                         }
