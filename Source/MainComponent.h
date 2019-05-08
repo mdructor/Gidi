@@ -40,7 +40,7 @@ class MainComponent   : public Component, public ChangeListener, public Timer
         Slider sldrPitch;
 
         std::unique_ptr<MidiKeyboardComponent> midiVisual;
-        std::unique_ptr<GamepadComponent> gamepadComponent;
+        std::shared_ptr<GamepadComponent> gamepadComponent;
 
         std::unique_ptr<GidiProcessor> processor;
 

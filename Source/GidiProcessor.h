@@ -4,6 +4,7 @@
 #include "GidiMap.h"
 #include "GamepadMap.h"
 #include "ComponentType.h"
+#include "GamepadComponent.h"
 #include "NoteParser.h"
 #include "ComponentSpecialFunction.h"
 #include "AppSettings.h"
@@ -63,6 +64,8 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
         std::shared_ptr<MidiKeyboardState> midiState;
 
+        std::shared_ptr<GamepadComponent> gamepadComponent;
+
 
     public:
 
@@ -86,6 +89,8 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         void setBoardState( std::shared_ptr<MidiKeyboardState> state) { midiState = state;}
 
         GamepadMap<Array<int>> getComponentMap() { return compMap;}
+
+        void setGamepadComponent(std::shared_ptr<GamepadComponent> gp) { gamepadComponent = gp; }
 
         void pulse();
         virtual void run() override;

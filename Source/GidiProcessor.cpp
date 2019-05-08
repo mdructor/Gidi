@@ -157,6 +157,10 @@ void GidiProcessor::handleComponentChanges() {
                 if (i.second != prevCompState[i.first]) { // button state has changed from prev call!
 
                     if (std::get<bool>(i.second)) { // Button got pressed on!
+                        if (gamepadComponent) {
+                            gamepadComponent->ctrlrBtns->operator[](i.first)->setComponentState(true);
+                            gamepadComponent->repaint();
+                        }
                         for (auto func : compMap.operator[](i.first)) {
                             switch(func) {
                                 case (int) ComponentSpecialFunction::OctaveUp:
@@ -199,6 +203,10 @@ void GidiProcessor::handleComponentChanges() {
                         }
                     } 
                     else { // Button got turned off!
+                        if (gamepadComponent) {
+                            gamepadComponent->ctrlrBtns->operator[](i.first)->setComponentState(false);
+                            gamepadComponent->repaint();
+                        }
                         for (auto func : compMap.operator[](i.first)) {
                             switch(func) {
                                 case (int) ComponentSpecialFunction::Sustain:

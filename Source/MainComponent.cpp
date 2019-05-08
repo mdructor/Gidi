@@ -6,7 +6,7 @@ MainComponent::MainComponent()
     midiVisual = std::unique_ptr<MidiKeyboardComponent>(
         new MidiKeyboardComponent(*keyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard));
 
-    gamepadComponent = std::unique_ptr<GamepadComponent>(new GamepadComponent());
+    gamepadComponent = std::shared_ptr<GamepadComponent>(new GamepadComponent());
 
     // Button setup
     btnToggle.setImages(false, true, false, playIcon, 1, Colours::white, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
@@ -252,6 +252,7 @@ void MainComponent::toggle() {
         isProcessing = true;
         processor->addChangeListener(this);
         processor->setBoardState(keyboardState);
+        processor->setGamepadComponent(gamepadComponent);
         processor->startThread(10);
     }
     else {
