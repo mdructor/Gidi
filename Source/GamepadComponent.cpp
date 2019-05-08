@@ -2,39 +2,33 @@
 
 GamepadComponent::GamepadComponent() {
 
-    ctrlrBtns = new GamepadMap<ControllerButton*>();
-    ctrlrBtns->insert_or_assign(ComponentType::A, new ControllerButton());
-    ctrlrBtns->insert_or_assign(ComponentType::B, new ControllerButton());
-    ctrlrBtns->insert_or_assign(ComponentType::X, new ControllerButton());
-    ctrlrBtns->insert_or_assign(ComponentType::Y, new ControllerButton());
-    ctrlrBtns->insert_or_assign(ComponentType::LStick, new ControllerButton());
-    ctrlrBtns->insert_or_assign(ComponentType::RStick, new ControllerButton());
-    ctrlrBtns->insert_or_assign(ComponentType::Guide, new ControllerButton());
-    ctrlrBtns->insert_or_assign(ComponentType::DpadLeft, new ControllerButton(ControllerButton::ButtonType::DpadHori));
-    ctrlrBtns->insert_or_assign(ComponentType::DpadRight, new ControllerButton(ControllerButton::ButtonType::DpadHori));
-    ctrlrBtns->insert_or_assign(ComponentType::DpadDown, new ControllerButton(ControllerButton::ButtonType::DpadVert));
-    ctrlrBtns->insert_or_assign(ComponentType::DpadUp, new ControllerButton(ControllerButton::ButtonType::DpadVert));
-    ctrlrBtns->insert_or_assign(ComponentType::LBmpr, new ControllerButton(ControllerButton::ButtonType::Bumper));
-    ctrlrBtns->insert_or_assign(ComponentType::RBmpr, new ControllerButton(ControllerButton::ButtonType::Bumper));
-    ctrlrBtns->insert_or_assign(ComponentType::LTrigger, new ControllerButton(ControllerButton::ButtonType::Trigger));
-    ctrlrBtns->insert_or_assign(ComponentType::RTrigger, new ControllerButton(ControllerButton::ButtonType::Trigger));
-    ctrlrBtns->insert_or_assign(ComponentType::Start, new ControllerButton(ControllerButton::ButtonType::Bumper));
-    ctrlrBtns->insert_or_assign(ComponentType::Back, new ControllerButton(ControllerButton::ButtonType::Bumper));
+    ctrlrBtns = std::unique_ptr<GamepadMap<std::unique_ptr<ControllerButton>>>(new GamepadMap<std::unique_ptr<ControllerButton>>());
+    ctrlrBtns->insert_or_assign(ComponentType::A, std::unique_ptr<ControllerButton>(new ControllerButton()));
+    ctrlrBtns->insert_or_assign(ComponentType::B, std::unique_ptr<ControllerButton>(new ControllerButton()));
+    ctrlrBtns->insert_or_assign(ComponentType::X, std::unique_ptr<ControllerButton>(new ControllerButton()));
+    ctrlrBtns->insert_or_assign(ComponentType::Y, std::unique_ptr<ControllerButton>(new ControllerButton()));
+    ctrlrBtns->insert_or_assign(ComponentType::LStick, std::unique_ptr<ControllerButton>(new ControllerButton()));
+    ctrlrBtns->insert_or_assign(ComponentType::RStick, std::unique_ptr<ControllerButton>(new ControllerButton()));
+    ctrlrBtns->insert_or_assign(ComponentType::Guide, std::unique_ptr<ControllerButton>(new ControllerButton()));
+    ctrlrBtns->insert_or_assign(ComponentType::DpadLeft, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::DpadHori)));
+    ctrlrBtns->insert_or_assign(ComponentType::DpadRight, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::DpadHori)));
+    ctrlrBtns->insert_or_assign(ComponentType::DpadDown, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::DpadVert)));
+    ctrlrBtns->insert_or_assign(ComponentType::DpadUp, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::DpadVert)));
+    ctrlrBtns->insert_or_assign(ComponentType::LBmpr, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::Bumper)));
+    ctrlrBtns->insert_or_assign(ComponentType::RBmpr, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::Bumper)));
+    ctrlrBtns->insert_or_assign(ComponentType::LTrigger, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::Trigger)));
+    ctrlrBtns->insert_or_assign(ComponentType::RTrigger, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::Trigger)));
+    ctrlrBtns->insert_or_assign(ComponentType::Start, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::Bumper)));
+    ctrlrBtns->insert_or_assign(ComponentType::Back, std::unique_ptr<ControllerButton>(new ControllerButton(ControllerButton::ButtonType::Bumper)));
 
-    for (auto i : *ctrlrBtns) {
-        addAndMakeVisible(i.second);
+    for (const auto& i : *ctrlrBtns) {
+        addAndMakeVisible(i.second.get());
     }
 
     setSize(300, 175);
 }
 
 GamepadComponent::~GamepadComponent() {
-    for (auto i: *ctrlrBtns) {
-        delete i.second;
-        i.second = nullptr;
-    }
-    delete ctrlrBtns;
-    ctrlrBtns = nullptr;
 }
 
 void GamepadComponent::resized() {

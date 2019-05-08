@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerButton.h"
 #include "GamepadMap.h"
@@ -19,7 +20,7 @@ class GamepadComponent : public Component
         GamepadComponent();
         ~GamepadComponent();
 
-        GamepadMap<ControllerButton*>* ctrlrBtns;
+        std::unique_ptr<GamepadMap<std::unique_ptr<ControllerButton>>> ctrlrBtns;
 
 
 

@@ -51,8 +51,9 @@ MainComponent::MainComponent()
     txtMapInfo.setText("Welcome to Gidi!\nSelect a midi port, controller, and mapping then press the play button to begin!\n");
 
     gamepadComponent->setEnabled(false);
-    for (auto i : *gamepadComponent->ctrlrBtns) {
-        i.second->onStateChange = [this,i] {onGamepadButtonStateChange(i.second);};
+    for (const auto& i : *(gamepadComponent->ctrlrBtns)) {
+        ControllerButton* btn = i.second.get();
+        btn->onStateChange = [this, btn] {onGamepadButtonStateChange(btn);};
     }
 
     // adding in sections, left column down, then right column down, then footer
@@ -311,7 +312,7 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster* source) {
 void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
     if (source->isMouseOver()) {
         for (const auto& i : *(gamepadComponent->ctrlrBtns)) {
-            if (i.second == source) {
+            if (i.second.get() == source) {
                 String builder = ComponentTypeToString(i.first) + ":\n";
                 GamepadMap<Array<int>> gpm = processor->getComponentMap();
                 if (gpm.count(i.first) != 0) {
