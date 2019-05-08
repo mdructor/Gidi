@@ -61,7 +61,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
         std::unique_ptr<MidiOutput> midiOut;
 
-        MidiKeyboardState* midiState = nullptr;
+        std::shared_ptr<MidiKeyboardState> midiState;
 
 
     public:
@@ -73,8 +73,8 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         GidiProcessor(int controllerIndex, const GidiMap& map, MidiOutput* midiOut);
         ~GidiProcessor();
 
-        int getCurrentVelocity() {return currentVelocity;}
-        void setDefaultVelocity(int velocity) {defaultVelocity = velocity;}
+        int getCurrentVelocity() { return currentVelocity; }
+        void setDefaultVelocity(int velocity) { defaultVelocity = velocity; }
 
         int getOctaveChange() {return octaveChange;}
         void setOctaveChange(int val) {octaveChange = val;
@@ -82,8 +82,8 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         int getPitchChange() {return pitchChange;}
         void setPitchChange(int val) {pitchChange = val;msgQueue.add(MidiMessage::allNotesOff(1));}
 
-        MidiKeyboardState* getBoardState() { return midiState; }
-        void setBoardState( MidiKeyboardState* state) { midiState = state;}
+        std::shared_ptr<MidiKeyboardState> getBoardState() { return std::shared_ptr<MidiKeyboardState>(midiState); }
+        void setBoardState( std::shared_ptr<MidiKeyboardState> state) { midiState = state;}
 
         GamepadMap<Array<int>> getComponentMap() { return compMap;}
 

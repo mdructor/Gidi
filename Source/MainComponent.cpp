@@ -2,8 +2,9 @@
 
 MainComponent::MainComponent()
 {   
+    keyboardState = std::shared_ptr<MidiKeyboardState>(new MidiKeyboardState());
     midiVisual = std::unique_ptr<MidiKeyboardComponent>(
-        new MidiKeyboardComponent(keyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard));
+        new MidiKeyboardComponent(*keyboardState, MidiKeyboardComponent::Orientation::horizontalKeyboard));
 
     gamepadComponent = std::unique_ptr<GamepadComponent>(new GamepadComponent());
 
@@ -249,7 +250,7 @@ void MainComponent::toggle() {
 
         isProcessing = true;
         processor->addChangeListener(this);
-        processor->setBoardState(&keyboardState);
+        processor->setBoardState(keyboardState);
         processor->startThread(10);
     }
     else {

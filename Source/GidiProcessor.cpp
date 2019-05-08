@@ -50,7 +50,7 @@ GidiProcessor::GidiProcessor(int controllerIndex, const GidiMap& map, MidiOutput
     currentVelocity = defaultVelocity;
 
     midiOut = std::unique_ptr<MidiOutput>(midi);
-    midiState = new MidiKeyboardState();
+    midiState = std::shared_ptr<MidiKeyboardState>(new MidiKeyboardState());
     midiChannel = AppSettings::getMidiChannel();
 
     prevCompState.insert_or_assign(ComponentType::A, false);

@@ -32,7 +32,6 @@ class MainComponent   : public Component, public ChangeListener, public Timer
         Label       lblMapping;
         Label       lblMidiPort;
         TextEditor txtMapInfo;
-        MidiKeyboardState      keyboardState;
         Label  lblVelocity;
         Label  lblOctave;
         Label  lblPitch;
@@ -45,11 +44,12 @@ class MainComponent   : public Component, public ChangeListener, public Timer
 
         std::unique_ptr<GidiProcessor> processor;
 
+        std::shared_ptr<MidiKeyboardState>      keyboardState;
 
         Array<GidiMap> loadedMaps;
 
-
         bool isProcessing = false;
+
 
         void refreshComboBoxes();
         void refreshMapComboBox();
