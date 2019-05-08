@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <memory>
 
 /* 
     special gui button component that will take on the shape of a 
@@ -13,15 +14,17 @@ class ControllerButton : public DrawableButton {
         enum ButtonType {Circle, DpadVert, DpadHori, Bumper, Trigger};
 
     private:
+        const Colour COMPONENT_OFF = Colour::fromRGBA(0, 0, 0, 0);
+        const Colour COMPONENT_ON = Colours::red;
         ButtonType btnType;
-        Path* shape;
-        DrawablePath* path;
-        DrawablePath* over;
-        DrawablePath* down;
+        std::unique_ptr<Path> shape;
+        std::unique_ptr<DrawablePath> path;
+        std::unique_ptr<DrawablePath> over;
+        std::unique_ptr<DrawablePath> down;
 
     public:
         ControllerButton(ButtonType btnType = ButtonType::Circle) : DrawableButton("", DrawableButton::ButtonStyle::ImageFitted) {
-            shape = new Path();
+            shape = std::unique_ptr<Path>(new Path());
             if (btnType == ButtonType::Circle) {
                 shape->addEllipse(0, 0, 50, 50);
             }
@@ -38,24 +41,34 @@ class ControllerButton : public DrawableButton {
                 shape->addRoundedRectangle(0, 0, 30, 35, 5);
             }
 
-            path = new DrawablePath();
+            path = std::unique_ptr<DrawablePath>(new DrawablePath());
             path->setPath(*shape);
             path->setStrokeThickness(3);
-            path->setFill(FillType(Colour::fromRGBA(0, 0, 0, 0)));
+            path->setFill(FillType(COMPONENT_OFF));
 
-            over = new DrawablePath(*path);
+            over = std::unique_ptr<DrawablePath>(new DrawablePath(*path));
             over->setStrokeFill(FillType(Colours::white));
 
-            down = new DrawablePath(*path);
+            down = std::unique_ptr<DrawablePath>(new DrawablePath(*path));
             down->setFill(FillType(Colours::red));
 
-            setImages(path, over, down);
+            setImages(path.get(), over.get(), down.get());
         }
         ~ControllerButton() {
-            delete shape;
-            delete path;
-            delete over;
-            delete down;
+        }
+
+        void setComponentState(bool on) {
+            Colour fill;
+            if (on) {
+                fill = COMPONENT_ON;
+            }
+            else {
+                fill = COMPONENT_OFF;
+            }
+            path->setFill(FillType(fill));
+            over->setFill(FillType(fill));
+            down->setFill(FillType(fill));
+            setImages(path.get(), over.get(), down.get());
         }
 
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ControllerButton)
