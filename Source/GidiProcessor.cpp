@@ -46,6 +46,9 @@ GidiProcessor::GidiProcessor(int controllerIndex, const GidiMap& map, MidiOutput
 
     compMap = activeMap.componentMap;
 
+    defaultVelocity = activeMap.mapInfo.defaultVelocity;
+    currentVelocity = defaultVelocity;
+
     midiOut = std::unique_ptr<MidiOutput>(midi);
     midiState = new MidiKeyboardState();
     midiChannel = AppSettings::getMidiChannel();
@@ -225,7 +228,7 @@ void GidiProcessor::handleComponentChanges() {
                                         if (notesOn.contains(func) && !sustainOn) {
                                             notesOn.removeFirstMatchingValue(func);
                                             if (!notesOn.contains(func)) {
-                                                msgQueue.add(MidiMessage::noteOff(1, func));
+                                                msgQueue.add(MidiMessage::noteOff(midiChannel, func));
                                             }
                                         }
                                     }                                     
