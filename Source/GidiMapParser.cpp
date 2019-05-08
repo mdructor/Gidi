@@ -43,7 +43,7 @@ GidiMap GidiMapParser::loadGidiMap(File mapFile)
         }
 
         if (infoJson.contains("author") && infoJson["author"].is_string()) {
-            map.mapInfo.name = infoJson["author"].get<std::string>();
+            map.mapInfo.author = infoJson["author"].get<std::string>();
         }
 
         if (infoJson.contains("default-velocity") && infoJson["default-velocity"].is_number_integer()) {
@@ -86,4 +86,22 @@ GidiMap GidiMapParser::loadGidiMap(File mapFile)
     }
 
     return map;
+}
+
+Array<GidiMap> GidiMapParser::loadMapsFromDir(File dir) {
+    Array<GidiMap> loadedMaps;
+
+    if (dir.exists() && dir.isDirectory()) {
+        auto jsonFiles = dir.findChildFiles(File::TypesOfFileToFind::findFiles, false, "*.json");
+        for (auto jsonFile : jsonFiles) {
+            try {
+                loadedMaps.add(GidiMapParser::loadGidiMap(jsonFile));
+            }
+            catch (const GidiMapParsingException& e) {
+                printf("Couldn't parse map: %s\n", jsonFile.getFileName().toRawUTF8());
+            }
+        }
+    }
+
+    return loadedMaps;
 }

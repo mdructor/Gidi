@@ -33,7 +33,11 @@
       <FILE id="PDhkFM" name="AppSettings.h" compile="0" resource="0" file="Source/AppSettings.h"/>
       <FILE id="y1fdTF" name="ComponentType.cpp" compile="1" resource="0"
             file="Source/ComponentType.cpp"/>
+      <FILE id="kJZ3TK" name="GidiMapParser.h" compile="0" resource="0" file="Source/GidiMapParser.h"/>
       <FILE id="PNiCWn" name="NewMidiDialog.h" compile="1" resource="0" file="Source/NewMidiDialog.h"/>
+      <FILE id="JOMulg" name="GidiMapParser.cpp" compile="1" resource="0"
+            file="Source/GidiMapParser.cpp"/>
+      <FILE id="bS756E" name="GidiMap.h" compile="0" resource="0" file="Source/GidiMap.h"/>
       <FILE id="gnmYyv" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
   </MAINGROUP>

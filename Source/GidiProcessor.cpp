@@ -37,14 +37,14 @@ GidiProcessor::GidiProcessor() : Thread("ControllerProcessing")
 {
 }
 
-GidiProcessor::GidiProcessor(int controllerIndex, int mapIndex, MidiOutput* midi) 
+GidiProcessor::GidiProcessor(int controllerIndex, const GidiMap& map, MidiOutput* midi) 
                             : Thread("ControllerProcessing") 
 {
 
     activeControllerIndex = controllerIndex;
-    activeMapIndex = mapIndex;
+    activeMap = map;
 
-    compMap = mapReader.createComponentMap(mapIndex);
+    compMap = activeMap.componentMap;
 
     midiOut = std::unique_ptr<MidiOutput>(midi);
     midiState = new MidiKeyboardState();
@@ -75,10 +75,6 @@ GidiProcessor::GidiProcessor(int controllerIndex, int mapIndex, MidiOutput* midi
 
 GidiProcessor::~GidiProcessor() {
     stopThread(2000);
-    if (compMap != nullptr) {
-        delete compMap;
-    }
-    compMap = nullptr;
 }
 
 void GidiProcessor::run() 
@@ -151,14 +147,14 @@ void GidiProcessor::handleComponentChanges() {
 
     for (const auto& i : currCompState) {
 
-        if (compMap->count(i.first) != 0) { // if our component map contains the current key 
+        if (compMap.count(i.first) != 0) { // if our component map contains the current key 
 
             if (i.second.index() == 0) {  // if the variant is a bool, we are looking at a On/Off button state
 
                 if (i.second != prevCompState[i.first]) { // button state has changed from prev call!
 
                     if (std::get<bool>(i.second)) { // Button got pressed on!
-                        for (auto func : compMap->operator[](i.first)) {
+                        for (auto func : compMap.operator[](i.first)) {
                             switch(func) {
                                 case (int) ComponentSpecialFunction::OctaveUp:
                                     if (getOctaveChange() < 6)  {
@@ -200,7 +196,7 @@ void GidiProcessor::handleComponentChanges() {
                         }
                     } 
                     else { // Button got turned off!
-                        for (auto func : compMap->operator[](i.first)) {
+                        for (auto func : compMap.operator[](i.first)) {
                             switch(func) {
                                 case (int) ComponentSpecialFunction::Sustain:
                                     if (notesOn.contains(func)) {
@@ -240,7 +236,7 @@ void GidiProcessor::handleComponentChanges() {
                 }
             }        
             else { // we must be looking at a Pressure sensitive int
-                for (auto func : compMap->operator[](i.first)) {
+                for (auto func : compMap.operator[](i.first)) {
                     float pct_down = std::get<int>(i.second) / 32767.0;
                     if (pct_down < 0) {
                         pct_down *= -1;

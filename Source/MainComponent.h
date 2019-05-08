@@ -3,8 +3,9 @@
 #include <memory>
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "MapReader.h"
 #include "GidiProcessor.h"
+#include "GidiMap.h"
+#include "GidiMapParser.h"
 #include "GamepadComponent.h"
 #include "NewMidiDialog.h"
 #include "AppSettings.h"
@@ -44,12 +45,15 @@ class MainComponent   : public Component, public ChangeListener, public Timer
 
         std::unique_ptr<GidiProcessor> processor;
 
-        MapReader mapReader;        
+
+        Array<GidiMap> loadedMaps;
 
 
         bool isProcessing = false;
 
         void refreshComboBoxes();
+        void refreshMapComboBox();
+
         void toggle();
 
         void openOptionsDialog();

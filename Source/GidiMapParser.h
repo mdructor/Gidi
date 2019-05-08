@@ -15,6 +15,7 @@ class GidiMapParser {
 
     public:
         static GidiMap loadGidiMap(File mapFile);
+        static Array<GidiMap> loadMapsFromDir(File dir);
 
 };
 

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "GidiMap.h"
 #include "GamepadMap.h"
 #include "ComponentType.h"
-#include "MapReader.h"
 #include "NoteParser.h"
 #include "ComponentSpecialFunction.h"
 #include "AppSettings.h"
@@ -36,11 +36,11 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
         int midiChannel = 1;
 
-        MapReader mapReader;
+        GidiMap activeMap;
 
         GamepadMap<std::variant<bool, int>> prevCompState;
         GamepadMap<std::variant<bool, int>> currCompState;
-        GamepadMap<Array<int>>* compMap = nullptr;
+        GamepadMap<Array<int>> compMap;
 
         Array<int> notesOn;
 
@@ -70,7 +70,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         static void updateCtrlrHandles();
 
         GidiProcessor();
-        GidiProcessor(int controllerIndex, int mapIndex, MidiOutput* midiOut);
+        GidiProcessor(int controllerIndex, const GidiMap& map, MidiOutput* midiOut);
         ~GidiProcessor();
 
         int getCurrentVelocity() {return currentVelocity;}
@@ -85,7 +85,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         MidiKeyboardState* getBoardState() { return midiState; }
         void setBoardState( MidiKeyboardState* state) { midiState = state;}
 
-        GamepadMap<Array<int>>* getComponentMap() { return compMap;}
+        GamepadMap<Array<int>> getComponentMap() { return compMap;}
 
         void pulse();
         virtual void run() override;

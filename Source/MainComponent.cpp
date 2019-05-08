@@ -146,22 +146,7 @@ void MainComponent::refreshComboBoxes() {
         }
     }
 
-    names.clear();
-    cbNames.clear();
-    for (auto name : mapReader.getLoadedMapNames()) {
-        names.add(name);
-    }
-    for (int i = 0; i < cbMappings.getNumItems(); ++i) {
-        cbNames.add(cbMappings.getItemText(i));
-    }
-    if (names != cbNames) { // if they were different
-        cbMappings.clear();
-        int i = 1;
-        for (auto name : names) {
-            cbMappings.addItem(name, i);
-            ++i;
-        }
-    }
+   refreshMapComboBox();
 
     names.clear();
     cbNames.clear();
@@ -177,6 +162,58 @@ void MainComponent::refreshComboBoxes() {
         for (auto name : names) {
             cbMidiPorts.addItem(name, i);
             ++i;
+        }
+    }
+}
+
+void MainComponent::refreshMapComboBox() {
+    StringArray cbNames;
+    StringArray newNames;
+    for (int i = 0; i < cbMappings.getNumItems(); ++i) {
+        cbNames.add(cbMappings.getItemText(i));
+    }
+
+    File mapDir(AppSettings::getMapDirectory());
+    if (mapDir.exists()) {
+        auto childDirs = mapDir.findChildFiles(File::TypesOfFileToFind::findDirectories, false);
+        Array<GidiMap> maps = GidiMapParser::loadMapsFromDir(mapDir);
+        for (auto map : maps) {
+            newNames.add(map.mapInfo.name);
+        }
+        for (auto dir : childDirs) {
+            maps = GidiMapParser::loadMapsFromDir(dir);
+            for (auto map : maps) {
+                newNames.add(map.mapInfo.name);
+            }
+        }
+    }
+    if (newNames != cbNames) { // something changed, reload mapz!
+        loadedMaps.clear();
+        cbMappings.clear();
+        if (mapDir.exists()) {
+            auto childDirs = mapDir.findChildFiles(File::TypesOfFileToFind::findDirectories, false);
+            Array<GidiMap> maps = GidiMapParser::loadMapsFromDir(mapDir);
+            for (auto map : maps) {
+                loadedMaps.add(map);
+            }
+            int id = 1;
+            for (auto map : maps) {
+                cbMappings.addItem(map.mapInfo.name, id);
+                ++id;
+            }
+            for (auto dir : childDirs) {
+                maps = GidiMapParser::loadMapsFromDir(dir);
+                for (auto map : maps) {
+                    loadedMaps.add(map);
+                }
+                cbMappings.addSeparator();
+                cbMappings.addSectionHeading(dir.getFileName());
+                cbMappings.addSeparator();
+                for (auto map : maps) {
+                    cbMappings.addItem(map.mapInfo.name, id);
+                    ++id;
+                }
+            }
         }
     }
 }
@@ -199,12 +236,12 @@ void MainComponent::toggle() {
         sldrVelocity.setEnabled(true);
         gamepadComponent->setEnabled(true);
 
-        MapReader::MapInfo mapInfo = mapReader.getMapInfo(cbMappings.getSelectedId() - 1);
-        String info = "Map: " + mapInfo.name + "\n" + "Author: " + mapInfo.author + "\n";
+        GidiMap activeMap = loadedMaps[cbMappings.getSelectedId() - 1];
+        String info = "Map: " + activeMap.mapInfo.name + "\n" + "Author: " + activeMap.mapInfo.author + "\n";
         txtMapInfo.setText(info);
 
         GidiProcessor::updateCtrlrHandles();
-        processor = std::unique_ptr<GidiProcessor>(new GidiProcessor(cbControllers.getSelectedId() - 1, cbMappings.getSelectedId() - 1, MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1)));
+        processor = std::unique_ptr<GidiProcessor>(new GidiProcessor(cbControllers.getSelectedId() - 1, loadedMaps[cbMappings.getSelectedId() - 1], MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1)));
 
         sldrOctave.setValue(processor->getOctaveChange());
         sldrPitch.setValue(processor->getPitchChange());
@@ -243,7 +280,6 @@ void MainComponent::openOptionsDialog() {
     dialogOptions.dialogTitle = "Advanced Settings";
     dialogOptions.content.set(new OptionsComponent(), true);
     dialogOptions.launchAsync();
-    mapReader.refresh();
     refreshComboBoxes();
 }
 
@@ -276,9 +312,9 @@ void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
         for (const auto& i : *(gamepadComponent->ctrlrBtns)) {
             if (i.second == source) {
                 String builder = ComponentTypeToString(i.first) + ":\n";
-                GamepadMap<Array<int>>* gpm = processor->getComponentMap();
-                if (gpm->count(i.first) != 0) {
-                    for (const auto& n : gpm->operator[](i.first)) {
+                GamepadMap<Array<int>> gpm = processor->getComponentMap();
+                if (gpm.count(i.first) != 0) {
+                    for (const auto& n : gpm.operator[](i.first)) {
                         if (n < 20) { // TODO : May need to change this for max functions DEFINITELY SOMETIME
                             builder += ComponentSpecialFunctionToString((ComponentSpecialFunction) n) + "\n";
                         }
@@ -294,8 +330,7 @@ void MainComponent::onGamepadButtonStateChange(ControllerButton* source) {
         }
     }
     else {
-        MapReader::MapInfo mapInfo = mapReader.getMapInfo(cbMappings.getSelectedId() - 1);
-        String info = "Map: " + mapInfo.name + "\n" + "Author: " + mapInfo.author + "\n";
+        String info = "Map: " + loadedMaps[cbMappings.getSelectedId() - 1].mapInfo.name + "\n" + "Author: " + loadedMaps[cbMappings.getSelectedId() - 1].mapInfo.author + "\n";
         txtMapInfo.setText(info);;
     }
 }
