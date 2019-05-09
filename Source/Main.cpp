@@ -9,7 +9,9 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <memory>
 #include "MainComponent.h"
+#include "GidiLookAndFeel.h"
 #include "AppSettings.h"
 
 #define SDL_MAIN_HANDLED
@@ -25,6 +27,8 @@ public:
     const String getApplicationName() override       { return ProjectInfo::projectName; }
     const String getApplicationVersion() override    { return ProjectInfo::versionString; }
     bool moreThanOneInstanceAllowed() override       { return true; }
+    
+    std::unique_ptr<GidiLookAndFeel> gidiLAF;
 
     //==============================================================================
     void initialise (const String& commandLine) override
@@ -33,6 +37,8 @@ public:
         SDL_Init(SDL_INIT_GAMECONTROLLER);
         AppSettings::loadAppSettings();
         mainWindow.reset (new MainWindow (getApplicationName()));
+        gidiLAF = std::unique_ptr<GidiLookAndFeel>(new GidiLookAndFeel());
+        mainWindow->getContentComponent()->setLookAndFeel(gidiLAF.get());
     }
 
     void shutdown() override
@@ -54,6 +60,7 @@ public:
     class MainWindow    : public DocumentWindow
     {
     public:
+
         MainWindow (String name)  : DocumentWindow (name,
                                                     Desktop::getInstance().getDefaultLookAndFeel()
                                                                           .findColour (ResizableWindow::backgroundColourId),
