@@ -8,11 +8,11 @@
 #include "NoteParser.h"
 #include "ComponentSpecialFunction.h"
 #include "AppSettings.h"
-#define SDL_MAIN_HANDLED
-#include <SDL2/SDL.h>
 #include <memory>
 #include <variant>
 
+#define SDL_MAIN_HANDLED
+#include <SDL2/SDL.h>
 /*
     Core of Gidi 
     This static part of this class holds a handle to all available gamepads connected 

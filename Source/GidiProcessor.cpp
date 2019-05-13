@@ -5,7 +5,8 @@ SDL_GameController* GidiProcessor::controllerHandles[MAX_CONTROLLERS];
 int GidiProcessor::availableControllers;
 
 
-void GidiProcessor::updateCtrlrHandles() {
+void GidiProcessor::updateCtrlrHandles() 
+{
     SDL_GameControllerUpdate();
     int cIndex = 0;
     for (int jIndex=0; jIndex < SDL_NumJoysticks(); ++jIndex) {
@@ -76,7 +77,8 @@ GidiProcessor::GidiProcessor(int controllerIndex, const GidiMap& map, MidiOutput
     prevCompState.insert_or_assign(ComponentType::RStickY, 0);
 }
 
-GidiProcessor::~GidiProcessor() {
+GidiProcessor::~GidiProcessor() 
+{
     stopThread(2000);
 }
 
@@ -146,8 +148,8 @@ void GidiProcessor::recordControllerState()
     currCompState.insert_or_assign(ComponentType::RStickY, SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY));
 }
 
-void GidiProcessor::handleComponentChanges() {
-
+void GidiProcessor::handleComponentChanges() 
+{
     for (const auto& i : currCompState) {
 
         if (compMap.count(i.first) != 0) { // if our component map contains the current key 
