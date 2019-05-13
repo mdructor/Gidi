@@ -5,10 +5,21 @@
 class GidiLookAndFeel : public LookAndFeel_V4
 {
     public:
+        /* decent
+        const Colour primary = Colour::fromRGB(80, 81, 96);
+        const Colour secondary = Colour::fromRGB(104, 130, 158);
+        const Colour accent = Colour::fromRGB(174, 189, 56);
+        */
 
-        const Colour primary = Colour::fromRGB(45, 45, 45);
-        const Colour secondary = Colour::fromRGB(80, 80, 80);
-        const Colour accent = Colour::fromRGB(25, 25, 25);
+       /* decent
+        const Colour primary = Colour::fromRGB(55, 94, 151);
+        const Colour secondary = Colour::fromRGB(63, 104, 28);
+        const Colour accent = Colour::fromRGB(255, 187, 0);
+        */
+
+        const Colour primary = Colour::fromRGB(76, 100, 245);
+        const Colour secondary = Colour::fromRGB(52, 55, 124);
+        const Colour accent = Colour::fromRGB(32, 148, 139);
 
         GidiLookAndFeel() {
 
@@ -19,6 +30,9 @@ class GidiLookAndFeel : public LookAndFeel_V4
             setColour(PopupMenu::backgroundColourId, secondary);
 
             setColour(TextEditor::backgroundColourId, secondary);
+
+            setColour(TextButton::ColourIds::buttonColourId, secondary);
+            setColour(TextButton::ColourIds::buttonOnColourId, accent);
 
             setColour(Slider::ColourIds::thumbColourId, accent);
 

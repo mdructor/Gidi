@@ -9,9 +9,32 @@ MainComponent::MainComponent()
     gamepadComponent = std::shared_ptr<GamepadComponent>(new GamepadComponent());
 
     // Button setup
-    btnToggle.setImages(false, true, false, playIcon, 1, Colours::white, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
+    btnToggle.setImages(false, 
+                        true, 
+                        false, 
+                        playIcon, 
+                        1, 
+                        getLookAndFeel().findColour(TextButton::ColourIds::buttonColourId), 
+                        playIcon, 
+                        .5, 
+                        getLookAndFeel().findColour(TextButton::ColourIds::buttonOnColourId), 
+                        playIcon, 
+                        .25, 
+                        getLookAndFeel().findColour(TextButton::ColourIds::buttonOnColourId));
+
     btnToggle.onClick = [this] { toggle(); };
-    btnSettings.setImages(false, true, false, settingsIcon, 1, Colours::white, settingsIcon, .5, Colours::lightgrey, settingsIcon, .25, Colours::whitesmoke);
+    btnSettings.setImages(false, 
+                        true, 
+                        false, 
+                        settingsIcon, 
+                        1, 
+                        getLookAndFeel().findColour(TextButton::ColourIds::buttonColourId), 
+                        settingsIcon, 
+                        .5, 
+                        getLookAndFeel().findColour(TextButton::ColourIds::buttonOnColourId), 
+                        settingsIcon, 
+                        .25, 
+                        getLookAndFeel().findColour(TextButton::ColourIds::buttonOnColourId));
     btnSettings.onClick = [this] { openOptionsDialog(); };
 
 
@@ -229,7 +252,19 @@ void MainComponent::toggle() {
 
     if (!isProcessing) { // must be off
         stopTimer();
-        btnToggle.setImages(false, true, false, pauseIcon, 1, Colours::white, pauseIcon, .5, Colours::lightgrey, pauseIcon, .25, Colours::whitesmoke);
+        btnToggle.setImages(false, 
+                            true, 
+                            false, 
+                            pauseIcon, 
+                            1, 
+                            getLookAndFeel().findColour(TextButton::ColourIds::buttonColourId), 
+                            pauseIcon, 
+                            .5, 
+                            getLookAndFeel().findColour(TextButton::ColourIds::buttonOnColourId), 
+                            pauseIcon, 
+                            .25, 
+                            getLookAndFeel().findColour(TextButton::ColourIds::buttonOnColourId));
+
         cbMappings.setEnabled(false);
         cbControllers.setEnabled(false);
         cbMidiPorts.setEnabled(false);
@@ -257,8 +292,19 @@ void MainComponent::toggle() {
     }
     else {
         startTimer(REFRESH_TIME);
-        btnToggle.setButtonText("Start");
-        btnToggle.setImages(false, true, false, playIcon, 1, Colours::white, playIcon, .5, Colours::lightgrey, playIcon, .25, Colours::whitesmoke);
+        btnToggle.setImages(false, 
+                            true, 
+                            false, 
+                            playIcon, 
+                            1, 
+                            getLookAndFeel().findColour(TextButton::ColourIds::buttonColourId), 
+                            playIcon, 
+                            .5, 
+                            getLookAndFeel().findColour(TextButton::ColourIds::buttonOnColourId), 
+                            playIcon, 
+                            .25, 
+                            getLookAndFeel().findColour(TextButton::ColourIds::buttonOnColourId));
+
         cbMappings.setEnabled(true);
         cbControllers.setEnabled(true);
         cbMidiPorts.setEnabled(true);
@@ -282,6 +328,7 @@ void MainComponent::openOptionsDialog() {
     DialogWindow::LaunchOptions dialogOptions;
     dialogOptions.dialogTitle = "Advanced Settings";
     dialogOptions.content.set(new OptionsComponent(), true);
+    dialogOptions.content->setLookAndFeel(&getLookAndFeel());
     dialogOptions.launchAsync();
     refreshComboBoxes();
 }
