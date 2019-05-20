@@ -1,0 +1,29 @@
+{
+    "info": {
+        
+        "root": "C4",
+        "scale": "Major"
+    },
+
+    "map": {
+        "A": "i",
+        "B": "ii",
+        "X": "iii",
+        "Y": "iv",
+        "RBmpr": "v",
+        "Start": "vi",
+        "RStick": "vii",
+        "Guide": "viii",
+
+        "LBmpr": "Sustain",
+        "DpadUp": "cMajor",
+        "DpadDown": "cMinor",
+
+        "LTrigger": "PitchBend",
+        "DpadLeft": "OctaveDown",
+        "DpadRight": "OctaveUp"
+
+
+    }
+
+}
