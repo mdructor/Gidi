@@ -1,5 +1,5 @@
 {
-    "info": {
+    "settings": {
         
         "root": "C4",
         "scale": "Major"
@@ -16,8 +16,8 @@
         "Guide": "viii",
 
         "LBmpr": "Sustain",
-        "DpadUp": "cMajor",
-        "DpadDown": "cMinor",
+        "DpadUp": "acMajor",
+        "DpadDown": "acMinor",
 
         "LTrigger": "PitchBend",
         "DpadLeft": "OctaveDown",
