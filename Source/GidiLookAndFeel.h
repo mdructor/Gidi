@@ -25,6 +25,8 @@ class GidiLookAndFeel : public LookAndFeel_V4
 
             setColour(ResizableWindow::backgroundColourId, primary);
 
+            setColour(TooltipWindow::ColourIds::backgroundColourId, primary);
+
             setColour(ComboBox::backgroundColourId, secondary);
             
             setColour(PopupMenu::backgroundColourId, secondary);

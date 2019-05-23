@@ -38,7 +38,7 @@ public:
         AppSettings::loadAppSettings();
         mainWindow.reset (new MainWindow (getApplicationName()));
         gidiLAF = std::unique_ptr<GidiLookAndFeel>(new GidiLookAndFeel());
-        mainWindow->getContentComponent()->setLookAndFeel(gidiLAF.get());
+        mainWindow->setLookAndFeel(gidiLAF.get());
     }
 
     void shutdown() override
@@ -66,13 +66,14 @@ public:
                                                                           .findColour (ResizableWindow::backgroundColourId),
                                                     DocumentWindow::allButtons)
         {
-            setUsingNativeTitleBar (true);
+            setUsingNativeTitleBar (false);
             setContentOwned (new MainComponent(), true);
 
            #if JUCE_IOS || JUCE_ANDROID
             setFullScreen (true);
            #else
-            setResizable (false, false);
+            setResizable (true, true);
+            setResizeLimits(400, 286, 800, 572);
             centreWithSize (getWidth(), getHeight());
            #endif
 
