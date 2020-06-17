@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="AdCZpJ" name="Gidi" projectType="guiapp" jucerVersion="5.4.3"
+<JUCERPROJECT id="AdCZpJ" name="Gidi" projectType="guiapp" jucerVersion="5.4.7"
               cppLanguageStandard="17">
   <MAINGROUP id="gashTb" name="Gidi">
     <GROUP id="{2271E537-1EC5-58F1-9EA2-52FBD2C1D397}" name="Source">
@@ -26,7 +26,6 @@
       <FILE id="bECTHl" name="ControllerButton.h" compile="0" resource="0"
             file="Source/ControllerButton.h"/>
       <FILE id="StWtOH" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="Od0R27" name="MapReader.h" compile="1" resource="0" file="Source/MapReader.h"/>
       <FILE id="zxwLC6" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="PEV3J1" name="AppSettings.cpp" compile="1" resource="0" file="Source/AppSettings.cpp"/>

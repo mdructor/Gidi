@@ -15,7 +15,7 @@
 #include "AppSettings.h"
 
 #define SDL_MAIN_HANDLED
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 //==============================================================================
 class mdGidiApplication  : public JUCEApplication
