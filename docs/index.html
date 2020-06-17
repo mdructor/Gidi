@@ -1,190 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <style>
-        /* Style the tab */
-        .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
-        }
-
-            /* Style the buttons inside the tab */
-            .tab button {
-                background-color: inherit;
-                float: left;
-                border: none;
-                outline: none;
-                cursor: pointer;
-                padding: 14px 16px;
-                transition: 0.3s;
-                font-size: 17px;
-            }
-
-                /* Change background color of buttons on hover */
-                .tab button:hover {
-                    background-color: #ddd;
-                }
-
-                /* Create an active/current tablink class */
-                .tab button.active {
-                    background-color: #ccc;
-                }
-        .col {
-            float: left;
-            width: 17%;
-            padding: 5px;
-        }
-
-        /* Clear floats after image containers */
-        .row::after {
-            content: "";
-            clear: both;
-            display: table;
-        }
-        /* Style the tab content */
-        .tabcontent {
-            display: none;
-            padding: 6px 12px;
-            border: 1px solid #ccc;
-            border-top: none;
-            float: left
-        }
-        body {
-            background-color: lightgray;
-        }
-    </style>
-    <!-- Basic Page Needs
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <meta charset="utf-8">
-    <title>Gidi</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <!-- Mobile Specific Metas
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="css/mini.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- FONT
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-
-    <!-- CSS
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/skeleton.css">
-
-    <!-- Favicon
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="Mason Dructor">
+    <title>Gidi</title>
 </head>
+
 <body>
-    <div class="tab">
-        <button class="tablinks" onclick="openCity(event, 'Home')">Home</button>
-        <button class="tablinks" onclick="openCity(event, 'About Us')">About Us</button>
-        <button class="tablinks" onclick="openCity(event, 'Download')">Download</button>
-    </div>
 
-    <div id="Download" class="tabcontent">
-        <center>
-            <h4>Click the link below to download Gidi for your machine!</h4>
-            <p style="text-align:center;"><a href="http://www.yahoo.com">Windows 64 bit</a></p>
-            <p style="text-align:center;"><a href="http://www.yahoo.com" >Mac</a></p>
-        </center>
-    </div>
+    <header class="sticky">
 
-    <div id="Home" class="tabcontent">
+        <a href="#" class="logo">Gidi</a>
 
-        <div class="container">
-            <div class="row">
-                    <div class="one-half column" style="margin-top: 25%">
-                         <img src="images/logo.png" alt="gidi logo - game controller with a music note">
-                    </div>
-                <div class="one-half column" style="margin-top: 25%">
-                    <h1> Gidi</h1>
-                        <h4>A new way to play</h4>
-                            <p>
-                                By converting controller input, like button presses and stick movements,
-                                into MIDI messages, we can connect to a wide array of MIDI processors in any DAW and
-                                transform a controller into an instrument.
-                                Gidi is a tool to easily manage and control this interface.
-                            </p>
-                </div>
-                <div class="row">
-                    <div class="one-full column">
-                        <p>
-                            Gidi's development started in April 2019 and is still an active and ongoing process.
-                            If you are interested in learning more about Gidi, please reach out to me at
-                            <a href=masondructor@gmail.com>masondructor@gmail.com</a>.
-                        </p>
-                    </div>
-                </div>
+        <a href="#" class="button">Home</a>
+        <a href="#" class="button">Download</a>
+        <a href="#" class="button">Help</a>
+        <a href="#" class="button">Contact</a> 
+
+    </header>
+
+    <div class="container">
+        <div class="row cols-sm-6">
+            <div style="text-align: right;">
+                <img src="images/logo.png" alt="gidi logo - game controller with a music note">
+            </div>
+            <div>
+                <h1>Gidi</h1>
+                <h4>A new way to play.</h4>
+                <p>Turn all of those hard-earned hours of muscle memory you have built up on your gamepad into a new way to create.</p>
+                <p>
+                    Gidi maps your controller input into MIDI output, transforming your controller into a powerful digital instrument. Use Gidi with
+                    any DAW(Ableton, FLStudio, Logic, etc) or any MIDI synth and be on your way to creating beautiful melodies and harmony without
+                    ever having to touch a keyboard.
+                </p>
             </div>
         </div>
-    </div>
-
-    <div id="About Us" class="tabcontent">
-        <div class="row">
-            <div class="col">
-                <figure>
-                    <img src="images/image1.png" alt="Stanford" height="300" width="225">
-                    <figcaption>Stanford</figcaption>
-                </figure>
+        <div class="row cols-sm-6">
+            <div style="text-align: center;">
+                <img src="images/gidi-demo.gif" alt="gidi in action">
             </div>
-            <div class="col">
-                <figure>
-                    <img src="images/image2.png" alt="Gabe Scott" height="300" width="225">
-                    <figcaption>Gabe Scott</figcaption>
-                </figure>
+            <div>
+                <h3>Plug in -> play</h1>
+                <p>
+                    Gidi detects and connects to any type of gamepad you have (PS4, Xbox, Steam, etc). It will also detect available MIDI ports to send output to,
+                    allowing you to connect to any digital synth imaginable and a lifetime of creative endeavors.
+                </p>
+                <h4>Infinite possibilities</h3>
+                <p>
+                    Gidi gives your controller the full range of the keyboard and comes with pre-defined control mappings to help you get started with your new instrument.
+                    Mappings are fully extendable and new intuitive control schemes for different styles of music are always on the horizon.
+                </p>
+                <h4>Get it while its fresh!</h4>
+                <p>
+                    Gidi is still young and is growing quick.  You can get access to the available beta builds on the download page.  We love to get your 
+                    feature requests and bug reports. There are future plans for a less free pro version in the future including VST3 builds, dynamic control mapping,
+                    and more!
+                </p>
             </div>
-            <div class="col">
-                <figure>
-                    <img src="images/image3.png" alt="Mason Dructor" height="300" width="225">
-                    <figcaption>Mason Dructor</figcaption>
-                </figure>
-            </div>
-            <div class="col">
-                <figure>
-                    <img src="images/image4.png" alt="Nathan Vanderheiden" height="300" width="225">
-                    <figcaption>Nathan Vanderheiden</figcaption>
-                </figure>
-            </div>
-            <div class="col">
-                <figure>
-                    <img src="images/image5.png" alt="Reece Deyoung" height="300" width="225">
-                    <figcaption>Reece Deyoung</figcaption>
-                </figure>
-            </div>
-         </div>
-        <center>
-            <p>
-                We are a team of computer scientists with a love for music! We hve developed this
-                Gidi as a project for our Human Computer Interaction course at the University of
-                Oklahoma. For more information, contact our team leader at masondructor@gmail.com.
-            </p>
-        </center>
+        </div>
 
     </div>
 
-    <div id="Support" class="tabcontent">
-        
-    </div>
-
-    <script>
-        document.getElementsByClassName('tablinks')[0].click()
-        function openCity(evt, cityName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(cityName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
-    </script>
 </body>
+
+
 </html>
