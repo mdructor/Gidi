@@ -175,8 +175,8 @@ void MainComponent::refreshComboBoxes() {
 
     names.clear();
     cbNames.clear();
-    for (auto name : MidiOutput::getDevices()) {
-        names.add(name);
+    for (auto device : MidiOutput::getAvailableDevices()) {
+        names.add(device.name);
     }
     for (int i = 0; i < cbMidiPorts.getNumItems(); ++i) {
         cbNames.add(cbMidiPorts.getItemText(i));
@@ -278,7 +278,7 @@ void MainComponent::toggle() {
         txtMapInfo.setText(info);
 
         GidiProcessor::updateCtrlrHandles();
-        processor = std::unique_ptr<GidiProcessor>(new GidiProcessor(cbControllers.getSelectedId() - 1, loadedMaps[cbMappings.getSelectedId() - 1], MidiOutput::openDevice(cbMidiPorts.getSelectedId() - 1).get()));
+        processor = std::unique_ptr<GidiProcessor>(new GidiProcessor(cbControllers.getSelectedId() - 1, loadedMaps[cbMappings.getSelectedId() - 1], MidiOutput::openDevice(MidiOutput::getAvailableDevices()[cbMidiPorts.getSelectedId() - 1].identifier)));
 
         sldrOctave.setValue(processor->getOctaveChange());
         sldrPitch.setValue(processor->getPitchChange());

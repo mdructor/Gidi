@@ -38,7 +38,7 @@ GidiProcessor::GidiProcessor() : Thread("ControllerProcessing")
 {
 }
 
-GidiProcessor::GidiProcessor(int controllerIndex, const GidiMap& map, MidiOutput* midi) 
+GidiProcessor::GidiProcessor(int controllerIndex, const GidiMap& map, std::unique_ptr<MidiOutput> midi) 
                             : Thread("ControllerProcessing") 
 {
 
@@ -50,7 +50,7 @@ GidiProcessor::GidiProcessor(int controllerIndex, const GidiMap& map, MidiOutput
     defaultVelocity = activeMap.mapInfo.defaultVelocity;
     currentVelocity = defaultVelocity;
 
-    midiOut = std::unique_ptr<MidiOutput>(midi);
+    midi.swap(midiOut);
     midiState = std::shared_ptr<MidiKeyboardState>(new MidiKeyboardState());
     midiChannel = AppSettings::getMidiChannel();
 

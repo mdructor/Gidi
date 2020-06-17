@@ -50,9 +50,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
 
         Array<MidiMessage> msgQueue;
 
-        void handleButtonChanges();
         void recordControllerState();
-        void handleAxisMessages();
         void handleComponentChanges();
 
         int defaultVelocity = 100;
@@ -73,7 +71,7 @@ class GidiProcessor : public Thread, public ChangeBroadcaster {
         static void updateCtrlrHandles();
 
         GidiProcessor();
-        GidiProcessor(int controllerIndex, const GidiMap& map, MidiOutput* midiOut);
+        GidiProcessor(int controllerIndex, const GidiMap& map, std::unique_ptr<MidiOutput> midi);
         ~GidiProcessor();
 
         int getCurrentVelocity() { return currentVelocity; }
