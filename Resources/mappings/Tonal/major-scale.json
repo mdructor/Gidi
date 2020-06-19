@@ -14,10 +14,11 @@
         "LBmpr": "A4",
         "DpadUp": "B4",
         "DpadLeft": "C5",
-        "DpadRight": "PitchUp",
-        "DpadDown": "PitchDown",
-
-        "RTrigger": "PitchBend"
-
+        "Start": "OctaveUp",
+        "Option": "OctaveDown",
+        "DpadRight": "Sustain",
+        "DpadDown": "Sustain",
+        "RTrigger": "PitchBend",
+        "LTrigger": "Velocity"
     }
 }

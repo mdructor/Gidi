@@ -145,8 +145,8 @@ void MainComponent::resized()
     cbMappings.setBounds(80, 85, 200, 25);
 
     // Buttons underneath combo box section
-    btnSettings.setBounds(90, 130, 30, 30);
-    btnToggle.setBounds(190, 130, 30, 30);
+    btnSettings.setBounds(85, 125, 40, 40);
+    btnToggle.setBounds(185, 125, 40, 40);
 
     // text boxes below buttons on left side
     txtMapInfo.setBounds(10, 175, 270, 128);

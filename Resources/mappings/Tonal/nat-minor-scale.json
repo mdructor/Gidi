@@ -1,0 +1,23 @@
+{
+    "info": {
+        "name": "Natural Minor Scale",
+        "author": "Mason",
+        "default-velocity": 100
+    },
+
+    "map": {
+        "A": "C4",
+        "B": "D4",
+        "X": "Eb4",
+        "Y": "F4",
+        "RBmpr": "G4",
+        "LBmpr": "Ab4",
+        "DpadUp": "Bb4",
+        "DpadLeft": "C5",
+        "DpadRight": "PitchUp",
+        "DpadDown": "PitchDown",
+
+        "RTrigger": "PitchBend"
+
+    }
+}
