@@ -4,7 +4,7 @@
 Gidi is a tool that turns your gamepad (any typical game controller) into a digital instrument.  By mapping button presses and stick gestures to MIDI output, you can use Gidi with any DAW and synth to make music with an interface you already have muscle memory using (the gamepad)!
 
 <center>
-<img src="docs/images/gidi-demo.gif"/>
+<img src="webpage/images/gidi-demo.gif"/>
 </center>
 
 ## Available Platforms
