@@ -4,6 +4,8 @@
               displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="gashTb" name="Gidi">
     <GROUP id="{2271E537-1EC5-58F1-9EA2-52FBD2C1D397}" name="Source">
+      <FILE id="XhmFx3" name="GidiLookAndFeel.h" compile="0" resource="0"
+            file="Source/GidiLookAndFeel.h"/>
       <FILE id="B9yAZf" name="ComponentSpecialFunction.cpp" compile="1" resource="0"
             file="Source/ComponentSpecialFunction.cpp"/>
       <FILE id="hGzrtp" name="NoteParser.h" compile="0" resource="0" file="Source/NoteParser.h"/>
@@ -39,6 +41,7 @@
       <FILE id="bS756E" name="GidiMap.h" compile="0" resource="0" file="Source/GidiMap.h"/>
       <FILE id="gnmYyv" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
+    <FILE id="LcG4wZ" name="logo.png" compile="0" resource="1" file="Resources/icons/logo.png"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraLinkerFlags="-lSDL2">
@@ -62,7 +65,8 @@
         <MODULEPATH id="juce_opengl" path="../tools/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2019 targetFolder="Builds/VisualStudio2019" externalLibraries="SDL2.lib&#10;SDL2main.lib">
+    <VS2019 targetFolder="Builds/VisualStudio2019" externalLibraries="SDL2.lib&#10;SDL2main.lib"
+            smallIcon="LcG4wZ" bigIcon="LcG4wZ">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" postbuildCommand="xcopy $(SolutionDir)..\..\Resources $(OutDir) /E/H/Y"/>
         <CONFIGURATION isDebug="0" name="Release"/>
