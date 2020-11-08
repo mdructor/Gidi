@@ -71,10 +71,10 @@ public:
     {
     public:
 
-        MainWindow (String name)  : DocumentWindow (name,
-                                                    Desktop::getInstance().getDefaultLookAndFeel()
-                                                                          .findColour (ResizableWindow::backgroundColourId),
-                                                    DocumentWindow::allButtons)
+        MainWindow(String name) : DocumentWindow(name,
+            Desktop::getInstance().getDefaultLookAndFeel()
+            .findColour(ResizableWindow::backgroundColourId),
+            DocumentWindow::minimiseButton | DocumentWindow::closeButton)
         {
             setUsingNativeTitleBar (false);
             setContentOwned (new MainComponent(), true);

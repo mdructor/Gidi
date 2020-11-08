@@ -46,9 +46,13 @@ class MainComponent   : public Component, public ChangeListener, public Timer
         ComboBox    cbMidiPorts;
         ImageButton btnSettings;
         ImageButton btnToggle;
+        ImageComponent imgLogo;
+        Image logoIcon = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile(AppSettings::getIconsDirectory()).getChildFile("logo.png"));
         Image settingsIcon = PNGImageFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(AppSettings::getIconsDirectory()).getChildFile("settings.png"));
         Image playIcon = PNGImageFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(AppSettings::getIconsDirectory()).getChildFile("play-button.png")); // TODO: MOVE THIS LOAD ELSEWHERE
         Image pauseIcon = PNGImageFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(AppSettings::getIconsDirectory()).getChildFile("pause-button.png"));
+        Font fntTitle;
+        Label lblTitle;
         Label       lblController;
         Label       lblMapping;
         Label       lblMidiPort;

@@ -57,8 +57,15 @@ MainComponent::MainComponent()
                         getLookAndFeel().findColour(TextButton::ColourIds::buttonOnColourId));
     btnSettings.onClick = [this] { openOptionsDialog(); };
 
+    // Logo Setup
+    imgLogo.setImage(logoIcon);
+
+
 
     // Label init
+    fntTitle = Font("Consolas", 44, Font::plain);
+    lblTitle.setText("Gidi", NotificationType::dontSendNotification);
+    lblTitle.setFont(fntTitle);
     lblController.setText("Controller:", NotificationType::dontSendNotification);
     lblMapping.setText("Mapping:", NotificationType::dontSendNotification);
     lblMidiPort.setText("Midi Port:", NotificationType::dontSendNotification);
@@ -100,6 +107,8 @@ MainComponent::MainComponent()
     }
 
     // adding in sections, left column down, then right column down, then footer
+    addAndMakeVisible(lblTitle);
+    addAndMakeVisible(imgLogo);
     addAndMakeVisible(btnSettings);
     addAndMakeVisible(btnToggle);
     addAndMakeVisible(cbControllers);
@@ -136,17 +145,19 @@ MainComponent::~MainComponent()
 
 void MainComponent::resized()
 {
-    // Top Left Quadrant of Combo Boxes/labels
-    lblMidiPort.setBounds(5, 15, 100, 25);
-    cbMidiPorts.setBounds(80, 15, 200, 25);
-    lblController.setBounds(5, 50, 100, 25);
-    cbControllers.setBounds(80, 50, 200, 25);
-    lblMapping.setBounds(5, 85, 100, 25);
-    cbMappings.setBounds(80, 85, 200, 25);
-
     // Buttons underneath combo box section
-    btnSettings.setBounds(85, 125, 40, 40);
-    btnToggle.setBounds(185, 125, 40, 40);
+    lblTitle.setBounds(75, 5, 100, 50);
+    imgLogo.setBounds(10, 0, 50, 50);
+    btnSettings.setBounds(175, 10, 40, 40);
+    btnToggle.setBounds(235, 10, 40, 40);
+
+    // Top Left Quadrant of Combo Boxes/labels
+    lblMidiPort.setBounds(5, 65, 100, 25);
+    cbMidiPorts.setBounds(80, 65, 200, 25);
+    lblController.setBounds(5, 100, 100, 25);
+    cbControllers.setBounds(80, 100, 200, 25);
+    lblMapping.setBounds(5, 135, 100, 25);
+    cbMappings.setBounds(80, 135, 200, 25);
 
     // text boxes below buttons on left side
     txtMapInfo.setBounds(10, 175, 270, 128);
