@@ -218,7 +218,7 @@ void MainComponent::refreshMapComboBox() {
         cbNames.add(cbMappings.getItemText(i));
     }
 
-    File mapDir(AppSettings::getMapDirectory());
+    File mapDir = File::getCurrentWorkingDirectory().getChildFile(AppSettings::getMapDirectory());
     if (mapDir.exists()) {
         auto childDirs = mapDir.findChildFiles(File::TypesOfFileToFind::findDirectories, false);
         Array<GidiMap> maps = GidiMapParser::loadMapsFromDir(mapDir);

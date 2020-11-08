@@ -31,8 +31,8 @@ bool AppSettings::loadAppSettings() {
     if (!settingsFile.existsAsFile()) {
         printf("Couldn't find app settings file...\n");
         printf("Going with defaults settings.\n");
-        mapDirectory = "./mappings/";
-        iconsDirectory = "./icons/";
+        mapDirectory = "mappings/";
+        iconsDirectory = "icons/";
         midiChannel = 1;
         return false;
     }
@@ -45,8 +45,8 @@ bool AppSettings::loadAppSettings() {
     catch (const json::parse_error& e) {
         printf("Couldn't parse settings file.");
         printf("Going with defaults settings.\n");
-        mapDirectory = "./mappings/";
-        iconsDirectory = "./icons/";
+        mapDirectory = "mappings/";
+        iconsDirectory = "icons/";
         midiChannel = 1;
     }
 

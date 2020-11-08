@@ -46,9 +46,9 @@ class MainComponent   : public Component, public ChangeListener, public Timer
         ComboBox    cbMidiPorts;
         ImageButton btnSettings;
         ImageButton btnToggle;
-        Image settingsIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("settings.png"));
-        Image playIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("play-button.png")); // TODO: MOVE THIS LOAD ELSEWHERE
-        Image pauseIcon = PNGImageFormat::loadFrom(File(AppSettings::getIconsDirectory()).getChildFile("pause-button.png"));
+        Image settingsIcon = PNGImageFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(AppSettings::getIconsDirectory()).getChildFile("settings.png"));
+        Image playIcon = PNGImageFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(AppSettings::getIconsDirectory()).getChildFile("play-button.png")); // TODO: MOVE THIS LOAD ELSEWHERE
+        Image pauseIcon = PNGImageFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(AppSettings::getIconsDirectory()).getChildFile("pause-button.png"));
         Label       lblController;
         Label       lblMapping;
         Label       lblMidiPort;
